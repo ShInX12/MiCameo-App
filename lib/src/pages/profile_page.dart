@@ -33,7 +33,7 @@ class ProfilePage extends StatelessWidget {
                       urlImage: snapshot.data.profileImage,
                     );
                   } else {
-                    return Text('Token incorrecto', style: TextStyle(color: Colors.white));
+                    return Text('No se pudo obtener el usuario', style: TextStyle(color: Colors.white));
                   }
                 }
               },
@@ -164,7 +164,7 @@ class _AvatarImage extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(100),
       child: Container(
-        child: (urlImage == null)
+        child: (urlImage == null || urlImage == '')
             ? Image(image: AssetImage('assets/img/no_talent_image.png'))
             : FadeInImage(
                 placeholder: AssetImage('assets/img/loading_gif.gif'),

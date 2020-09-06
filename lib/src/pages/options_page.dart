@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mi_cameo/src/models/user_model.dart';
 import 'package:mi_cameo/src/repository/client_repository.dart';
 import 'package:mi_cameo/src/preferences/user_preferences.dart';
 
@@ -15,60 +14,15 @@ class OptionsPage extends StatelessWidget {
           'Opciones',
           style: Theme.of(context).textTheme.headline6,
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.exit_to_app),
-            onPressed: () async {
-              prefs.accessToken = '';
-              prefs.refreshToken = '';
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil('initial', (Route<dynamic> route) => false);
-            },
-          )
-        ],
       ),
-      body: FutureBuilder(
-        future: clientRepository.getCurrentClient(prefs.accessToken),
-        builder: (context, AsyncSnapshot<Client> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else {
-            if (snapshot.hasData) {
-              // return Form1(snapshot.data);
-              return Form2(snapshot.data, prefs);
-            } else if (snapshot.hasError) {
-              return Center(child: Text(snapshot.error));
-            } else {
-              return Center(child: Text('Token incorrecto'));
-            }
-          }
-        },
-      ),
-    );
-  }
-}
-
-class Form1 extends StatelessWidget {
-  final Client client;
-  const Form1(this.client);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Text('Nombre:'),
-        TextFormField(
-          initialValue: client.user.firstName,
-        ),
-      ],
+      body: Form2(prefs),
     );
   }
 }
 
 class Form2 extends StatelessWidget {
-  final Client client;
   final UserPreferences preferences;
-  const Form2(this.client, this.preferences);
+  Form2(this.preferences);
 
   @override
   Widget build(BuildContext context) {
@@ -77,35 +31,12 @@ class Form2 extends StatelessWidget {
         ListTile(
           contentPadding: EdgeInsets.symmetric(horizontal: 20),
           title: Text(
-            'Nombre',
+            'Editar perfil',
             style: Theme.of(context).textTheme.subtitle1,
           ),
           leading: Icon(Icons.person),
           trailing: Icon(Icons.chevron_right),
-          subtitle: Text(client.user.firstName),
-          onTap: () {},
-        ),
-        ListTile(
-          contentPadding: EdgeInsets.symmetric(horizontal: 20),
-          title: Text(
-            'Apellido',
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
-          leading: Icon(Icons.face),
-          trailing: Icon(Icons.chevron_right),
-          subtitle: Text(client.user.lastName),
-          onTap: () {},
-        ),
-        ListTile(
-          contentPadding: EdgeInsets.symmetric(horizontal: 20),
-          title: Text(
-            'Número de teléfono',
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
-          leading: Icon(Icons.phone_android),
-          trailing: Icon(Icons.chevron_right),
-          subtitle: Text(client.phoneNumber),
-          onTap: () {},
+          onTap: () => Navigator.pushNamed(context, 'edit_profile'),
         ),
         ListTile(
           contentPadding: EdgeInsets.symmetric(horizontal: 20),
@@ -114,6 +45,16 @@ class Form2 extends StatelessWidget {
             style: Theme.of(context).textTheme.subtitle1,
           ),
           leading: Icon(Icons.lock),
+          trailing: Icon(Icons.chevron_right),
+          onTap: () {},
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 20),
+          title: Text(
+            'Método de pago',
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
+          leading: Icon(Icons.credit_card),
           trailing: Icon(Icons.chevron_right),
           onTap: () {},
         ),

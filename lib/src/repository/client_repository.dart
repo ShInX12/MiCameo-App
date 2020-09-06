@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_twitter_login/flutter_twitter_login.dart';
@@ -10,26 +11,73 @@ class ClientRepository {
   final prefs = UserPreferences();
 
   Future<Map<String, dynamic>> registerClient(String email, String password) async {
-    final Map<String, String> body = {'email': email, 'password': password};
-    final urlFull = Uri.https(baseUrl, 'api/auth/users/register-client');
-    final response = await http.post(urlFull, body: body);
+    try {
+      final Map<String, String> body = {'email': email, 'password': password};
+      final urlFull = Uri.https(baseUrl, 'api/auth/users/register-client');
+      final response = await http.post(urlFull, body: body);
+      return {'status': response.statusCode, 'body': response.body};
+    } on SocketException {
+      return {'status': 600, 'body': 'No hay conexión a internet'};
+    } catch (e) {
+      return {'status': 600, 'body': 'Ha ocurrido un error interno: $e'};
+    }
+  }
 
-    return {'status': response.statusCode, 'body': response.body};
+  Future<User> updateUser(User user) async {
+    try {
+      final Map<String, dynamic> body = user.toJson();
+      final Map<String, String> headers = {
+        'Authorization': 'Bearer ${prefs.accessToken}',
+        'Content-Type': 'application/json'
+      };
+      final urlFull = Uri.https(baseUrl, 'api/users/${user.username}/');
+      final response = await http.patch(urlFull, body: json.encode(body), headers: headers);
+      if (response.statusCode == 200) {
+        final jsonUser = json.decode(response.body);
+        return User.fromJson(jsonUser);
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<Client> updateClient(Client client) async {
+    try {
+      final Map<String, dynamic> body = client.toJson();
+      final Map<String, String> headers = {
+        'Authorization': 'Bearer ${prefs.accessToken}',
+        'Content-Type': 'application/json'
+      };
+      final urlFull = Uri.https(baseUrl, 'api/client/${client.user.username}/');
+      final response = await http.patch(urlFull, body: json.encode(body), headers: headers);
+      if (response.statusCode == 200) {
+        final Map jsonClient = json.decode(response.body);
+        return Client.fromJson(jsonClient);
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<Map<String, dynamic>> loginWithEmail(String email, String password) async {
-    final Map<String, String> body = {'username': email, 'password': password};
-
-    final urlFull = Uri.https(baseUrl, 'api/auth/users/login');
-    final response = await http.post(urlFull, body: body);
-    final data = json.decode(response.body);
-
-    if (response.statusCode == 200) {
-      prefs.initPrefs();
-      prefs.accessToken = data['access'];
-      prefs.refreshToken = data['refresh'];
+    try {
+      final Map<String, String> body = {'username': email, 'password': password};
+      final urlFull = Uri.https(baseUrl, 'api/auth/users/login');
+      final response = await http.post(urlFull, body: body);
+      if (response.statusCode == 200) {
+        final Map data = json.decode(response.body);
+        prefs.initPrefs();
+        prefs.accessToken = data['access'];
+        prefs.refreshToken = data['refresh'];
+      }
+      return {'status': response.statusCode, 'body': response.body};
+    } on SocketException {
+      return {'status': 600, 'body': 'No hay conexión a internet'};
+    } catch (e) {
+      return {'status': 600, 'body': 'Ha ocurrido un error interno: $e'};
     }
-    return {'status': response.statusCode, 'body': response.body};
   }
 
   Future<bool> loginWithFacebook() async {
@@ -56,18 +104,22 @@ class ClientRepository {
   }
 
   Future<bool> _authenticateFacebookToken(String accessToken) async {
-    final Map<String, String> body = {'access_token': accessToken, 'social_network': 'facebook'};
+    try {
+      final Map<String, String> body = {'access_token': accessToken, 'social_network': 'facebook'};
 
-    final urlFull = Uri.https(baseUrl, 'users/auth/social-login');
-    final response = await http.post(urlFull, body: body);
-    final data = json.decode(response.body);
+      final urlFull = Uri.https(baseUrl, 'users/auth/social-login');
+      final response = await http.post(urlFull, body: body);
 
-    if (response.statusCode == 200) {
-      prefs.initPrefs();
-      prefs.accessToken = data['access'];
-      prefs.refreshToken = data['refresh'];
-      return true;
-    } else {
+      if (response.statusCode == 200) {
+        final Map data = json.decode(response.body);
+        prefs.initPrefs();
+        prefs.accessToken = data['access'];
+        prefs.refreshToken = data['refresh'];
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
       return false;
     }
   }
@@ -101,37 +153,45 @@ class ClientRepository {
   }
 
   Future _authenticateTwitterToken(String accessToken, String secretToken) async {
-    final Map<String, String> body = {
-      'access_token': accessToken,
-      'access_token_secret': secretToken,
-      'social_network': 'twitter',
-      'email': 'sergio6006@hotmail.com',
-    };
+    try {
+      final Map<String, String> body = {
+        'access_token': accessToken,
+        'access_token_secret': secretToken,
+        'social_network': 'twitter',
+        'email': 'sergio6006@hotmail.com',
+      };
 
-    final urlFull = Uri.https(baseUrl, 'users/auth/social-login');
-    final response = await http.post(urlFull, body: body);
-    final data = json.decode(response.body);
+      final urlFull = Uri.https(baseUrl, 'users/auth/social-login');
+      final response = await http.post(urlFull, body: body);
 
-    if (response.statusCode == 200) {
-      prefs.initPrefs();
-      prefs.accessToken = data['access'];
-      prefs.refreshToken = data['refresh'];
-      return true;
-    } else {
+      if (response.statusCode == 200) {
+        final Map data = json.decode(response.body);
+        prefs.initPrefs();
+        prefs.accessToken = data['access'];
+        prefs.refreshToken = data['refresh'];
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
       return false;
     }
   }
 
   Future<Client> getCurrentClient(String token) async {
-    Map<String, String> headers = {'Authorization': 'Bearer $token'};
+    try {
+      Map<String, String> headers = {'Authorization': 'Bearer $token'};
 
-    final urlFull = Uri.https(baseUrl, 'api/client/me');
-    final response = await http.get(urlFull, headers: headers);
+      final urlFull = Uri.https(baseUrl, 'api/client/me');
+      final response = await http.get(urlFull, headers: headers);
 
-    if (response.statusCode == 200) {
-      final Map reponseJson = json.decode(response.body);
-      return Client.fromJson(reponseJson);
+      if (response.statusCode == 200) {
+        final Map jsonClient = json.decode(response.body);
+        return Client.fromJson(jsonClient);
+      }
+      return null;
+    } catch (e) {
+      return null;
     }
-    return null;
   }
 }

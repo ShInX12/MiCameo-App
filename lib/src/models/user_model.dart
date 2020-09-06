@@ -51,7 +51,7 @@ class Talent {
     String price;
     String url;
     List<String> categories;
-    dynamic birthday;
+    String birthday;
 
     factory Talent.fromJson(Map<String, dynamic> json) => Talent(
         user        : User.fromJson(json["user"]),
@@ -96,7 +96,7 @@ class Client {
     User user;
     String profileImage;
     String phoneNumber;
-    dynamic birthday;
+    String birthday;
     String url;
 
     factory Client.fromJson(Map<String, dynamic> json) => Client(

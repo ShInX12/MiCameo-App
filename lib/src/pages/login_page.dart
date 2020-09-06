@@ -65,7 +65,7 @@ class __LoginFormState extends State<_LoginForm> {
           builder: (BuildContext context) {
             return CustomAlertDialog(
               context: context,
-              title: 'Ha habido un error (${loginResult['status']})',
+              title: 'Ha ocurrido un error (${loginResult['status']})',
               content: loginResult['body'],
               onPressed: () => Navigator.pop(context),
             );

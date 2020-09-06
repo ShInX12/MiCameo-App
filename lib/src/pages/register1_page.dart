@@ -83,7 +83,8 @@ class __RegisterFormState extends State<_RegisterForm> {
                 ? 'Revisa el link enviado a tu correo para activar tu cuenta y poder iniciar sesión'
                 : result['body'],
             onPressed: () => result['status'] == 201
-                ? Navigator.popAndPushNamed(context, 'register2')
+                // ? Navigator.popAndPushNamed(context, 'register2')
+                ? Navigator.pop(context)
                 : Navigator.pop(context),
           );
         },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mi_cameo/src/pages/edit_profile_page.dart';
 import 'package:mi_cameo/src/pages/home_page.dart';
 import 'package:mi_cameo/src/pages/initial_page.dart';
 import 'package:mi_cameo/src/pages/login_page.dart';
@@ -35,6 +36,7 @@ Map<String, WidgetBuilder> applicationRoutes(){
     'request_present': (BuildContext context) => RequestCameoAsPresent(),
     'select_cameo': (BuildContext context) => SelectCameoPage(),
     'subcategory_list': (BuildContext context) => SubcategoryList(),
+    'edit_profile': (BuildContext context) => EditProfilePage(),
   };
 
 }
