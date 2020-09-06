@@ -39,7 +39,8 @@ class _BackgroundImage extends StatelessWidget {
       child: Container(
         width: double.infinity,
         height: screenSize.width,
-        child: (Provider.of<TalentState>(context).urlImage == null)
+        child: (Provider.of<TalentState>(context).urlImage == null ||
+                Provider.of<TalentState>(context).urlImage == '')
             ? Image(
                 image: AssetImage('assets/img/no_talent_image.png'),
                 fit: BoxFit.cover,
@@ -163,8 +164,7 @@ class _Categories extends StatelessWidget {
     List<String> categories = Provider.of<TalentState>(context).categories;
     return Wrap(
       spacing: 10,
-      children:
-          categories.map((category) => Chip(label: Text(category))).toList(),
+      children: categories.map((category) => Chip(label: Text(category))).toList(),
     );
   }
 }

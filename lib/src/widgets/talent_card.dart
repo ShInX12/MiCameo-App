@@ -68,7 +68,7 @@ class _TalentCardImage extends StatelessWidget {
       child: ClipRRect(
         // borderRadius: BorderRadius.all(Radius.circular(15)),
         borderRadius: BorderRadius.all(Radius.circular(100)),
-        child: (urlImage == null)
+        child: (urlImage == null || urlImage == '')
             ? Image(
                 image: AssetImage('assets/img/no_talent_image.png'),
                 fit: BoxFit.cover,
@@ -139,9 +139,7 @@ class _Price extends StatelessWidget {
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(50),
-          boxShadow: <BoxShadow>[
-            BoxShadow(color: Colors.grey, blurRadius: 3, spreadRadius: -1)
-          ]),
+          boxShadow: <BoxShadow>[BoxShadow(color: Colors.grey, blurRadius: 3, spreadRadius: -1)]),
     );
   }
 }

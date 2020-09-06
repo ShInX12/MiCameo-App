@@ -48,7 +48,7 @@ class _TalentImage extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(30),
         child: Container(
-          child: (urlImage == null)
+          child: (urlImage == null || urlImage == '')
               ? Image(image: AssetImage('assets/img/no_talent_image.png'))
               : FadeInImage(
                   placeholder: AssetImage('assets/img/loading_gif.gif'),
@@ -107,7 +107,7 @@ class _MessagesCount extends StatelessWidget {
               decoration: BoxDecoration(color: red, shape: BoxShape.circle),
               // child: Text(messagesCount.toString()),
               child: Text(
-                messagesCount.toString().length > 2? '99+': messagesCount.toString(),
+                messagesCount.toString().length > 2 ? '99+' : messagesCount.toString(),
                 style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w500),
               ),
             ),

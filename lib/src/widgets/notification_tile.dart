@@ -75,7 +75,7 @@ class _Avatar extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(30),
         child: Container(
-          child: (urlImage == null)
+          child: (urlImage == null || urlImage == '')
               ? Image(image: AssetImage('assets/img/no_talent_image.png'))
               : FadeInImage(
                   placeholder: AssetImage('assets/img/loading_gif.gif'),

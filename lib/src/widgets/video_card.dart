@@ -19,7 +19,9 @@ class VideoCard extends StatelessWidget {
         height: 84,
         child: _VideoCardImage(urlImage: urlImage),
         decoration: BoxDecoration(
-            color: darkPurple, borderRadius: BorderRadius.circular(16)),
+          color: darkPurple,
+          borderRadius: BorderRadius.circular(16),
+        ),
         // child: Column(
         //   crossAxisAlignment: CrossAxisAlignment.start,
         //   children: <Widget>[
@@ -48,7 +50,7 @@ class _VideoCardImage extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(100)),
         child: Container(
-          child: (urlImage == null)
+          child: (urlImage == null || urlImage == '')
               ? Image(
                   fit: BoxFit.cover,
                   image: AssetImage('assets/img/no_talent_image.png'),

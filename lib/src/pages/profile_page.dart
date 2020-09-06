@@ -33,7 +33,10 @@ class ProfilePage extends StatelessWidget {
                       urlImage: snapshot.data.profileImage,
                     );
                   } else {
-                    return Text('No se pudo obtener el usuario', style: TextStyle(color: Colors.white));
+                    return Text(
+                      'No se pudo obtener el usuario',
+                      style: TextStyle(color: Colors.white),
+                    );
                   }
                 }
               },
