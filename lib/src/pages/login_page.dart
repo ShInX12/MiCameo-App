@@ -45,6 +45,7 @@ class __LoginFormState extends State<_LoginForm> {
   // y nos permita validar el formulario
   final _formKey = GlobalKey<FormState>();
   _LoginModel loginModel = new _LoginModel();
+  final _emailValidator = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
   final clientRepository = new ClientRepository();
 
@@ -94,6 +95,7 @@ class __LoginFormState extends State<_LoginForm> {
             onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
             validator: (String value) {
               if (value.trim().length == 0) return 'Ingresa tu correo electrónico';
+              if (!_emailValidator.hasMatch(value.trim())) return 'Ingresa un correo válido';
               _formKey.currentState.save();
               return null;
             },
