@@ -69,6 +69,7 @@ class InputRegisterForm extends StatelessWidget {
 class InputRequestForm extends StatelessWidget {
   final String labelText;
   final String hintText;
+  final String initialValue;
   final TextInputType textInputType;
   final Icon prefixIcon;
   final bool obscureText;
@@ -82,6 +83,7 @@ class InputRequestForm extends StatelessWidget {
     this.textInputType = TextInputType.text,
     this.prefixIcon = const Icon(Icons.edit),
     this.hintText = '',
+    this.initialValue = '',
     this.obscureText = false,
     this.textInputAction = TextInputAction.done,
     @required this.validator,
@@ -95,6 +97,7 @@ class InputRequestForm extends StatelessWidget {
       child: TextFormField(
         obscureText: obscureText,
         keyboardType: textInputType,
+        initialValue: initialValue,
         style: TextStyle(color: Colors.black87, fontSize: 17, fontWeight: FontWeight.w400),
         validator: validator,
         onSaved: onSaved,

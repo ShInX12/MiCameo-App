@@ -12,6 +12,8 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="Mi Cameo"
         android:icon="@mipmap/ic_launcher">
+        <!-- android:requestLegacyExternalStorage="true" -->
+        <!-- Image picker: requestLegacyExternalStorage -->
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

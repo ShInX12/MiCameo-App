@@ -1,4 +1,9 @@
+import 'dart:io';
+import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mi_cameo/src/models/user_model.dart';
 import 'package:mi_cameo/src/preferences/user_preferences.dart';
 import 'package:mi_cameo/src/repository/client_repository.dart';
@@ -27,11 +32,7 @@ class ProfilePage extends StatelessWidget {
                   return CircularProgressIndicator();
                 } else {
                   if (snapshot.hasData) {
-                    return _ColumnAvatar(
-                      name: snapshot.data.user.username,
-                      email: snapshot.data.user.email,
-                      urlImage: snapshot.data.profileImage,
-                    );
+                    return _ColumnAvatar(client: snapshot.data);
                   } else {
                     return Text(
                       'No se pudo obtener el usuario',
@@ -108,24 +109,22 @@ class _Background extends StatelessWidget {
 }
 
 class _ColumnAvatar extends StatelessWidget {
-  final String name;
-  final String email;
-  final String urlImage;
+  final Client client;
 
-  const _ColumnAvatar({this.name, this.email, this.urlImage});
+  const _ColumnAvatar({this.client});
   @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        _AvatarImageBox(urlImage: urlImage),
+        _AvatarImageBox(client: client),
         SizedBox(height: 10),
         Text(
-          name == null ? '' : name,
+          client.user.username == null ? '' : client.user.username,
           style: Theme.of(context).textTheme.headline6,
         ),
         SizedBox(height: 5),
         Text(
-          email == null ? '' : email,
+          client.user.email == null ? '' : client.user.email,
           style: Theme.of(context).textTheme.bodyText2,
         ),
       ],
@@ -134,9 +133,9 @@ class _ColumnAvatar extends StatelessWidget {
 }
 
 class _AvatarImageBox extends StatelessWidget {
-  final String urlImage;
+  final Client client;
 
-  const _AvatarImageBox({this.urlImage});
+  const _AvatarImageBox({this.client});
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +146,7 @@ class _AvatarImageBox extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(6),
         margin: EdgeInsets.all(6),
-        child: _AvatarImage(urlImage: urlImage),
+        child: _AvatarImage(client: client),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: lightGrey,
@@ -157,23 +156,126 @@ class _AvatarImageBox extends StatelessWidget {
   }
 }
 
-class _AvatarImage extends StatelessWidget {
-  final String urlImage;
+class _AvatarImage extends StatefulWidget {
+  final Client client;
 
-  const _AvatarImage({this.urlImage});
+  const _AvatarImage({this.client});
+
+  @override
+  __AvatarImageState createState() => __AvatarImageState();
+}
+
+class __AvatarImageState extends State<_AvatarImage> {
+  FirebaseStorage storage = FirebaseStorage(storageBucket: 'gs://mi-cameo.appspot.com');
+  final clientRepository = ClientRepository();
+  final picker = ImagePicker();
+
+  imageMenu(Size size) {
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(size.width * 0.2, 180, size.width * 0.2, 200),
+      items: [
+        PopupMenuItem(
+          child: ListTile(
+            title: Text('Cambiar imagen'),
+            onTap: () {
+              pickImage();
+              Navigator.pop(context);
+            },
+          ),
+        ),
+        if (widget.client.profileImage.length > 1)
+          PopupMenuItem(
+            child: ListTile(
+              title: Text('Eliminar imagen'),
+              onTap: () {
+                deleteImage(widget.client.profileImage);
+                Navigator.pop(context);
+              },
+            ),
+          )
+      ],
+    );
+  }
+
+  Future<void> pickImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    if (pickedFile != null) _uploadFile(File(pickedFile.path));
+  }
+
+  Future<void> _uploadFile(File file) async {
+    final lastImage = widget.client.profileImage;
+    final String uuid = Uuid().v1();
+    final StorageReference ref = storage.ref().child('test').child('img$uuid.jpg');
+    final StorageUploadTask uploadTask = ref.putFile(
+      file,
+      StorageMetadata(
+        contentLanguage: 'es',
+        customMetadata: <String, String>{'activy': 'test'},
+      ),
+    );
+    await uploadTask.onComplete;
+    widget.client.profileImage = await ref.getDownloadURL();
+    final clientUpdated = await clientRepository.updateClient(widget.client);
+
+    if (clientUpdated != null) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text('Imagen actualizada'),
+        duration: Duration(seconds: 4),
+      ));
+      deleteImageFromStorage(lastImage);
+    } else {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text('No se pudo actualizar la imagen'),
+        duration: Duration(seconds: 4),
+      ));
+    }
+  }
+
+  Future<void> deleteImage(String lastImage) async {
+    widget.client.profileImage = '';
+    final clientUpdated = await clientRepository.updateClient(widget.client);
+    if (clientUpdated != null) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text('Imagen eliminada'),
+        duration: Duration(seconds: 4),
+      ));
+      deleteImageFromStorage(lastImage);
+    } else {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text('No se pudo eliminar la imagen'),
+        duration: Duration(seconds: 4),
+      ));
+    }
+  }
+
+  Future<void> deleteImageFromStorage(String imageUrl) async {
+    try {
+      final ref = await storage.getReferenceFromUrl(imageUrl);
+      await ref.delete();
+    } on PlatformException {
+      print('No existe la imagen en firebase');
+    } catch (e) {
+      print('Ha ocurrido un error: ' + e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(100),
-      child: Container(
-        child: (urlImage == null || urlImage == '')
-            ? Image(image: AssetImage('assets/img/no_talent_image.png'))
-            : FadeInImage(
-                placeholder: AssetImage('assets/img/loading_gif.gif'),
-                image: NetworkImage(urlImage),
-                fit: BoxFit.cover,
-              ),
+    final size = MediaQuery.of(context).size;
+    return GestureDetector(
+      onTap: () => imageMenu(size),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(100),
+        child: Container(
+          child: (widget.client.profileImage == null || widget.client.profileImage == '')
+              ? Image(image: AssetImage('assets/img/no_talent_image.png'))
+              : FadeInImage(
+                  placeholder: AssetImage('assets/img/loading_gif.gif'),
+                  image: NetworkImage(widget.client.profileImage),
+                  fit: BoxFit.cover,
+                ),
+        ),
       ),
     );
   }

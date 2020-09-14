@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "574591699552",
+    "firebase_url": "https://mi-cameo.firebaseio.com",
+    "project_id": "mi-cameo",
+    "storage_bucket": "mi-cameo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574591699552:android:91859037dc6688b76d9105",
+        "android_client_info": {
+          "package_name": "co.micameo.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "574591699552-a5drs7o7b07splkjgc2u05ndonpd6b3d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJ1Txj6z4X2WtoplrM43CKavihv8yt6aE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "574591699552-a5drs7o7b07splkjgc2u05ndonpd6b3d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

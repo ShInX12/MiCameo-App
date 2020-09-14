@@ -179,7 +179,11 @@ class _RequestButton extends StatelessWidget {
         text: 'Solictar Cameo',
         colorPurple: true,
         shadow: true,
-        onPressed: () => Navigator.pushNamed(context, 'select_cameo'),
+        onPressed: () => Navigator.pushNamed(
+          context,
+          'request_present',
+          arguments: Provider.of<TalentState>(context, listen: false).name,
+        ),
       ),
     );
   }

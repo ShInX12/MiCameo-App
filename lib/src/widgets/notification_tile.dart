@@ -25,7 +25,7 @@ class NotificationTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         color: lightGrey,
         child: InkWell(
-          onTap: () {},
+          onTap: onTap,
           customBorder: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
