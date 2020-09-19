@@ -169,6 +169,7 @@ class __AvatarImageState extends State<_AvatarImage> {
   FirebaseStorage storage = FirebaseStorage(storageBucket: 'gs://mi-cameo.appspot.com');
   final clientRepository = ClientRepository();
   final picker = ImagePicker();
+  bool loading = false;
 
   imageMenu(Size size) {
     showMenu(
@@ -204,19 +205,22 @@ class __AvatarImageState extends State<_AvatarImage> {
   }
 
   Future<void> _uploadFile(File file) async {
+    setState(() {
+      loading = true;
+    });
     final lastImage = widget.client.profileImage;
     final String uuid = Uuid().v1();
-    final StorageReference ref = storage.ref().child('test').child('img$uuid.jpg');
+    final StorageReference ref = storage.ref().child('uploads').child('img$uuid.jpg');
     final StorageUploadTask uploadTask = ref.putFile(
       file,
-      StorageMetadata(
-        contentLanguage: 'es',
-        customMetadata: <String, String>{'activy': 'test'},
-      ),
+      StorageMetadata(contentLanguage: 'es'),
     );
     await uploadTask.onComplete;
     widget.client.profileImage = await ref.getDownloadURL();
     final clientUpdated = await clientRepository.updateClient(widget.client);
+    setState(() {
+      loading = false;
+    });
 
     if (clientUpdated != null) {
       Scaffold.of(context).showSnackBar(SnackBar(
@@ -240,6 +244,7 @@ class __AvatarImageState extends State<_AvatarImage> {
         content: Text('Imagen eliminada'),
         duration: Duration(seconds: 4),
       ));
+      setState(() {});
       deleteImageFromStorage(lastImage);
     } else {
       Scaffold.of(context).showSnackBar(SnackBar(
@@ -265,17 +270,23 @@ class __AvatarImageState extends State<_AvatarImage> {
     final size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () => imageMenu(size),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(100),
-        child: Container(
-          child: (widget.client.profileImage == null || widget.client.profileImage == '')
-              ? Image(image: AssetImage('assets/img/no_talent_image.png'))
-              : FadeInImage(
-                  placeholder: AssetImage('assets/img/loading_gif.gif'),
-                  image: NetworkImage(widget.client.profileImage),
-                  fit: BoxFit.cover,
-                ),
-        ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(100),
+            child: Container(
+              child: (widget.client.profileImage == null || widget.client.profileImage == '')
+                  ? Image(image: AssetImage('assets/img/no_talent_image.png'))
+                  : FadeInImage(
+                      placeholder: AssetImage('assets/img/loading_gif.gif'),
+                      image: NetworkImage(widget.client.profileImage),
+                      fit: BoxFit.cover,
+                    ),
+            ),
+          ),
+          if (loading) CircularProgressIndicator(),
+        ],
       ),
     );
   }
@@ -309,51 +320,3 @@ class _Cameos extends StatelessWidget {
     );
   }
 }
-// class ProfilePage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         centerTitle: true,
-//         title: Text(
-//           'Mis cameos',
-//           style: TextStyle(
-//             fontSize: 28,
-//             fontWeight: FontWeight.w500,
-//             color: Colors.black87,
-//           ),
-//         ),
-//         backgroundColor: Colors.transparent,
-//         elevation: 0,
-//         actions: <Widget>[
-//           InkWell(
-//             borderRadius: BorderRadius.circular(30),
-//             onTap: () => Navigator.pushNamed(context, 'options'),
-//             child: Container(
-//               margin: EdgeInsets.symmetric(horizontal: 16),
-//               child: Icon(
-//                 Icons.settings,
-//                 color: Colors.black87,
-//               ),
-//             ),
-//           ),
-//         ],
-//       ),
-//       body: GridView.builder(
-//         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//           crossAxisCount: 2,
-//           childAspectRatio: 0.82,
-//         ),
-//         itemCount: 4,
-//         itemBuilder: (BuildContext context, int index) {
-//           return TalentCard(
-//             name: 'Felicidades Juan',
-//             ocupation: 'Michael Jackson',
-//             onTap: () {},
-//             urlImage: 'https://pbs.twimg.com/media/EZzYzLvWsAAk6jR.jpg',
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
