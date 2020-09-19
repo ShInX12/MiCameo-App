@@ -31,25 +31,28 @@ class _BackgroundImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
-    return ClipRRect(
-      borderRadius: BorderRadius.only(
-        bottomLeft: Radius.circular(50),
-        bottomRight: Radius.circular(50),
-      ),
-      child: Container(
-        width: double.infinity,
-        height: screenSize.width,
-        child: (Provider.of<TalentState>(context).urlImage == null ||
-                Provider.of<TalentState>(context).urlImage == '')
-            ? Image(
-                image: AssetImage('assets/img/no_talent_image.png'),
-                fit: BoxFit.cover,
-              )
-            : FadeInImage(
-                fit: BoxFit.cover,
-                placeholder: AssetImage('assets/img/loading_gif.gif'),
-                image: NetworkImage(Provider.of<TalentState>(context).urlImage),
-              ),
+    return Hero(
+      tag: Provider.of<TalentState>(context).name,
+      child: ClipRRect(
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(50),
+          bottomRight: Radius.circular(50),
+        ),
+        child: Container(
+          width: double.infinity,
+          height: screenSize.width,
+          child: (Provider.of<TalentState>(context).urlImage == null ||
+                  Provider.of<TalentState>(context).urlImage == '')
+              ? Image(
+                  image: AssetImage('assets/img/no_talent_image.png'),
+                  fit: BoxFit.cover,
+                )
+              : FadeInImage(
+                  fit: BoxFit.cover,
+                  placeholder: AssetImage('assets/img/loading_gif.gif'),
+                  image: NetworkImage(Provider.of<TalentState>(context).urlImage),
+                ),
+        ),
       ),
     );
   }
