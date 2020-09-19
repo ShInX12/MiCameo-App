@@ -25,23 +25,19 @@ class TalentCard extends StatelessWidget {
         margin: EdgeInsets.all(8),
         width: 135,
         height: 165,
-        child: Stack(
-          alignment: Alignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
+            Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
                 _TalentCardImage(urlImage: urlImage, name: name),
-                SizedBox(height: 5),
-                _TalentCardTitle(name: name),
-                _TalentCardSubtitle(ocupation: ocupation),
+                _Price(price: price),
               ],
             ),
-            Positioned(
-              // right: 10,
-              bottom: 45,
-              child: _Price(price: price),
-            ),
+            SizedBox(height: 5),
+            _TalentCardTitle(name: name),
+            _TalentCardSubtitle(ocupation: ocupation),
           ],
         ),
       ),
