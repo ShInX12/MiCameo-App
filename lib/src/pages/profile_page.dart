@@ -273,9 +273,11 @@ class __AvatarImageState extends State<_AvatarImage> {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(100),
-            child: Container(
+          Container(
+            width: 124,
+            height: 124,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(100),
               child: (widget.client.profileImage == null || widget.client.profileImage == '')
                   ? Image(image: AssetImage('assets/img/no_talent_image.png'))
                   : FadeInImage(
