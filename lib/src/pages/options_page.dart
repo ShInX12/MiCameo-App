@@ -69,6 +69,7 @@ class Form2 extends StatelessWidget {
           onTap: () async {
             preferences.accessToken = '';
             preferences.refreshToken = '';
+            preferences.email = '';
             Navigator.of(context)
                 .pushNamedAndRemoveUntil('initial', (Route<dynamic> route) => false);
             // Navigator.popUntil(context, ModalRoute.withName('initial'));

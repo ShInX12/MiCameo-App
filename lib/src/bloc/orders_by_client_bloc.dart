@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:mi_cameo/src/helpers/api_base_helper.dart';
 import 'package:mi_cameo/src/models/order_model.dart';
+import 'package:mi_cameo/src/preferences/user_preferences.dart';
 import 'package:mi_cameo/src/repository/orders_repository.dart';
 
 class OrdersBloc {
   StreamController _orderListController;
   OrdersRepository _ordersRepository;
+  final prefs = UserPreferences();
 
   StreamSink<ApiResponse<List<Order>>> get orderListSink => _orderListController.sink;
   Stream<ApiResponse<List<Order>>> get orderListStream => _orderListController.stream;
@@ -19,7 +21,7 @@ class OrdersBloc {
   Future<void> fetchOrderList() async {
     orderListSink.add(ApiResponse.loading('Cargando categorías'));
     try {
-      List<Order> orders = await _ordersRepository.fetchOrders('sergio6006@hotmail.com');
+      List<Order> orders = await _ordersRepository.fetchOrders(prefs.email);
       orderListSink.add(ApiResponse.completed(orders));
     } catch (e) {
       orderListSink.add(ApiResponse.error(e.toString()));

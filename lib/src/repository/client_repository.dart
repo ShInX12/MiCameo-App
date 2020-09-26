@@ -71,6 +71,7 @@ class ClientRepository {
         prefs.initPrefs();
         prefs.accessToken = data['access'];
         prefs.refreshToken = data['refresh'];
+        prefs.email = email;
       }
       return {'status': response.statusCode, 'body': response.body};
     } on SocketException {

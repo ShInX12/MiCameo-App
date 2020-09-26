@@ -31,4 +31,12 @@ class UserPreferences {
     _prefs.setString('refreshToken', value);
   }
 
+  get email {
+    return _prefs.getString('email') ?? '';
+  }
+
+  set email( String value ) {
+    _prefs.setString('email', value);
+  }
+
 }
