@@ -40,26 +40,26 @@ class _Body extends StatelessWidget {
     }
   }
 
-  void _loginWithTwitter(BuildContext context) async {
-    final clientRepository = new ClientRepository();
-    var isLoggedIn = await clientRepository.loginWithTwitter();
-    if (isLoggedIn) {
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          'navigation_bar', (Route<dynamic> route) => false);
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CustomAlertDialog(
-            context: context,
-            title: 'Ha ocurrido un error',
-            content: 'Vuelve a intentarlo',
-            onPressed: () => Navigator.pop(context),
-          );
-        },
-      );
-    }
-  }
+  // void _loginWithTwitter(BuildContext context) async {
+  //   final clientRepository = new ClientRepository();
+  //   var isLoggedIn = await clientRepository.loginWithTwitter();
+  //   if (isLoggedIn) {
+  //     Navigator.of(context).pushNamedAndRemoveUntil(
+  //         'navigation_bar', (Route<dynamic> route) => false);
+  //   } else {
+  //     showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return CustomAlertDialog(
+  //           context: context,
+  //           title: 'Ha ocurrido un error',
+  //           content: 'Vuelve a intentarlo',
+  //           onPressed: () => Navigator.pop(context),
+  //         );
+  //       },
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -77,13 +77,13 @@ class _Body extends StatelessWidget {
               text: 'Iniciar Sesión',
               onPressed: () => Navigator.pushNamed(context, 'login'),
             ),
-            SizedBox(height: 20),
-            ButtonType1(
-              color: Color(0xff1DA1F2),
-              textColor: Colors.white,
-              text: 'Ingresar con Twitter',
-              onPressed: () => _loginWithTwitter(context),
-            ),
+            // SizedBox(height: 20),
+            // ButtonType1(
+            //   color: Color(0xff1DA1F2),
+            //   textColor: Colors.white,
+            //   text: 'Ingresar con Twitter',
+            //   onPressed: () => _loginWithTwitter(context),
+            // ),
             SizedBox(height: 20),
             ButtonType1(
               color: Color(0xff006AFF),

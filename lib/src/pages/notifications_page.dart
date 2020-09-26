@@ -42,30 +42,34 @@ class _NotificationsPageState extends State<NotificationsPage> {
                   return Center(child: CircularProgressIndicator());
                   break;
                 case Status.COMPLETED:
-                  return ListView.builder(
-                    itemCount: snapshot.data.data.length,
-                    itemBuilder: (BuildContext context, int i) {
-                      return NotificationTile(
-                        title: snapshot.data.data[i].talent,
-                        subtitle: 'Estado del cameo: ${snapshot.data.data[i].talentResponse}',
-                        urlImage: 'https://picsum.photos/400/400',
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return CustomAlertDialog(
-                                context: context,
-                                onPressed: () => Navigator.pop(context),
-                                title: 'Detalles',
-                                content:
-                                    'Talento: ${snapshot.data.data[i].talent}\nDe: ${snapshot.data.data[i].fromClient}\nPara: ${snapshot.data.data[i].to}\nOcasion: ${snapshot.data.data[i].occasion}\nInstrucciones: ${snapshot.data.data[i].instructions}\nCreado: ${snapshot.data.data[i].created}',
-                              );
-                            },
-                          );
-                        },
-                      );
-                    },
-                  );
+                  if (snapshot.data.data.length == 0) {
+                    return Center(child: Text('Todavía no hay notificaciones'));
+                  } else {
+                    return ListView.builder(
+                      itemCount: snapshot.data.data.length,
+                      itemBuilder: (BuildContext context, int i) {
+                        return NotificationTile(
+                          title: snapshot.data.data[i].talent,
+                          subtitle: 'Estado del cameo: ${snapshot.data.data[i].talentResponse}',
+                          urlImage: 'https://picsum.photos/400/400',
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return CustomAlertDialog(
+                                  context: context,
+                                  onPressed: () => Navigator.pop(context),
+                                  title: 'Detalles',
+                                  content:
+                                      'Talento: ${snapshot.data.data[i].talent}\nDe: ${snapshot.data.data[i].fromClient}\nPara: ${snapshot.data.data[i].to}\nOcasion: ${snapshot.data.data[i].occasion}\nInstrucciones: ${snapshot.data.data[i].instructions}\nCreado: ${snapshot.data.data[i].created}',
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                    );
+                  }
                   break;
                 case Status.ERROR:
                   return Center(
