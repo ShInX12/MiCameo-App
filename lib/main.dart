@@ -25,8 +25,8 @@ class MyApp extends StatelessWidget {
       routes: applicationRoutes(),
       theme: lightTheme,
       home: FutureBuilder(
-        future: _clientRepository.getCurrentClient(prefs.accessToken),
-        builder: (context, AsyncSnapshot<Client> snapshot) {
+        future: _clientRepository.getCurrentUser(prefs.accessToken),
+        builder: (context, AsyncSnapshot<User> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
             case ConnectionState.waiting:

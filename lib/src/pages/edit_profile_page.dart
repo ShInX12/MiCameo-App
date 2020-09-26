@@ -80,7 +80,7 @@ class __ProfileFormState extends State<_ProfileForm> {
           builder: (context) {
             return CustomAlertDialog(
               context: context,
-              title: 'Error',
+              title: 'Oh no!',
               content: 'Ha ocurrido un error al actualizar el perfil',
               buttonText: 'Continuar',
               onPressed: () => Navigator.pop(context),

@@ -68,6 +68,9 @@ class ClientRepository {
       final response = await http.post(urlFull, body: body);
       if (response.statusCode == 200) {
         final Map data = json.decode(response.body);
+        if (data['is_talent'] == true) {
+          return {'status': 401, 'body': 'Ya estas registrado como talento'};
+        }
         prefs.initPrefs();
         prefs.accessToken = data['access'];
         prefs.refreshToken = data['refresh'];
@@ -176,6 +179,22 @@ class ClientRepository {
       }
     } catch (e) {
       return false;
+    }
+  }
+
+  Future<User> getCurrentUser(String token) async {
+    try {
+      Map<String, String> headers = {'Authorization': 'Bearer $token'};
+      final urlFull = Uri.https(baseUrl, 'api/users/me');
+      final response = await http.get(urlFull, headers: headers);
+
+      if (response.statusCode == 200) {
+        final Map jsonUser = json.decode(response.body);
+        return User.fromJson(jsonUser);
+      }
+      return null;
+    } catch (e) {
+      return null;
     }
   }
 
