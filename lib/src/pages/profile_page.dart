@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'package:mi_cameo/src/models/cameo_model.dart';
+import 'package:mi_cameo/src/repository/cameo_repository.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +11,6 @@ import 'package:mi_cameo/src/models/user_model.dart';
 import 'package:mi_cameo/src/preferences/user_preferences.dart';
 import 'package:mi_cameo/src/repository/client_repository.dart';
 import 'package:mi_cameo/src/themes/theme.dart';
-import 'package:mi_cameo/src/widgets/video_card.dart';
 
 class ProfilePage extends StatelessWidget {
   final prefs = UserPreferences();
@@ -43,7 +45,7 @@ class ProfilePage extends StatelessWidget {
               },
             ),
           ),
-          Positioned(top: 295, left: 20, child: _Title()),
+          Positioned(top: 300, left: 20, child: _Title()),
           _Cameos(),
         ],
       ),
@@ -294,29 +296,83 @@ class __AvatarImageState extends State<_AvatarImage> {
   }
 }
 
+// class _Cameos extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       margin: EdgeInsets.only(top: 320),
+//       child: ListView.builder(
+//         physics: BouncingScrollPhysics(),
+//         itemCount: 2,
+//         itemBuilder: (BuildContext context, int index) {
+//           return Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//             children: <Widget>[
+//               VideoCard(
+//                 urlImage: 'https://pbs.twimg.com/media/EZzYzLvWsAAk6jR.jpg',
+//               ),
+//               VideoCard(
+//                 urlImage: 'https://pbs.twimg.com/media/EZzYzLvWsAAk6jR.jpg',
+//               ),
+//               VideoCard(
+//                 urlImage: 'https://pbs.twimg.com/media/EZzYzLvWsAAk6jR.jpg',
+//               ),
+//             ],
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
+
 class _Cameos extends StatelessWidget {
+  final _cameoRepository = new CameoRepository();
+
+  Future<void> _launchBrowser(String url) async {
+    if (await canLaunch(url)) {
+      await launch(
+        url,
+        forceSafariVC: false,
+        forceWebView: false,
+        headers: <String, String>{},
+      );
+    } else {
+      throw 'No se pudo lanzar el navegador';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(top: 320),
-      child: ListView.builder(
-        physics: BouncingScrollPhysics(),
-        itemCount: 2,
-        itemBuilder: (BuildContext context, int index) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              VideoCard(
-                urlImage: 'https://pbs.twimg.com/media/EZzYzLvWsAAk6jR.jpg',
-              ),
-              VideoCard(
-                urlImage: 'https://pbs.twimg.com/media/EZzYzLvWsAAk6jR.jpg',
-              ),
-              VideoCard(
-                urlImage: 'https://pbs.twimg.com/media/EZzYzLvWsAAk6jR.jpg',
-              ),
-            ],
-          );
+      child: FutureBuilder(
+        future: _cameoRepository.fetchCameos(),
+        builder: (context, AsyncSnapshot<List<Cameo>> snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+              return Center(child: CircularProgressIndicator());
+              break;
+            default:
+              if (snapshot.hasError)
+                return Center(child: Text('Error al traer los cameos'));
+              else if (snapshot.hasData) {
+                if (snapshot.data.length == 0)
+                  return Center(child: Text('Todavía no tienes cameos'));
+                return ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (context, i) {
+                    return ListTile(
+                      title: Text('Id: ${snapshot.data[i].id}'),
+                      subtitle: Text(snapshot.data[i].urlVideo),
+                      onTap: () => _launchBrowser(snapshot.data[i].urlVideo),
+                    );
+                  },
+                );
+              } else {
+                return Container();
+              }
+          }
         },
       ),
     );

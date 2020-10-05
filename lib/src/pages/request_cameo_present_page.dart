@@ -42,6 +42,8 @@ class __RequestFormState extends State<_RequestForm> {
   final prefs = UserPreferences();
   Client client;
   bool isPublic = false;
+  final phoneNumberController = TextEditingController();
+  final nameController = TextEditingController();
 
   final occasions = <String>[
     'Cumpleaños',
@@ -59,7 +61,13 @@ class __RequestFormState extends State<_RequestForm> {
     clientRepository.getCurrentClient(prefs.accessToken).then((value) {
       client = value;
       setState(() {});
+      _setText();
     });
+  }
+
+  void _setText() {
+    phoneNumberController.text = client.phoneNumber;
+    nameController.text = client.user.firstName;
   }
 
   void _continue() async {
@@ -101,16 +109,32 @@ class __RequestFormState extends State<_RequestForm> {
         children: <Widget>[
           SizedBox(height: 40),
           _Label('De:'),
-          InputRequestForm(
+          TextFormField(
             textInputAction: TextInputAction.next,
-            labelText: null,
-            textInputType: TextInputType.name,
+            keyboardType: TextInputType.name,
+            controller: nameController,
+            style: TextStyle(color: Colors.black87, fontSize: 17, fontWeight: FontWeight.w400),
             validator: (String value) {
               if (value.length == 0) return '¿Quién envía el video?';
               _formKey.currentState.save();
               return null;
             },
             onSaved: (String value) => this.order.fromClient = value,
+            onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+          ),
+          SizedBox(height: 25),
+          _Label('Telefóno:'),
+          TextFormField(
+            textInputAction: TextInputAction.next,
+            keyboardType: TextInputType.phone,
+            controller: phoneNumberController,
+            style: TextStyle(color: Colors.black87, fontSize: 17, fontWeight: FontWeight.w400),
+            validator: (String value) {
+              if (value.length == 0) return '¿Dónde te podemos notificar?';
+              _formKey.currentState.save();
+              return null;
+            },
+            onSaved: (String value) => this.order.phoneNumber = value,
             onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
           ),
           SizedBox(height: 25),
