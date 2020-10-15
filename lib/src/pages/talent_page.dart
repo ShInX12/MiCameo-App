@@ -18,7 +18,7 @@ class TalentPage extends StatelessWidget {
           children: <Widget>[
             SingleChildScrollView(child: _BackgroundImage()),
             SingleChildScrollView(child: _CardBackground()),
-            Positioned(bottom: 14, child: _RequestButton()),
+            Positioned(bottom: 20, child: _RequestButton()),
             Positioned(left: -5, top: 40, child: _BackButton()),
           ],
         ),
@@ -83,7 +83,7 @@ class _CardBody extends StatelessWidget {
         _Description(),
         SizedBox(height: 10),
         _Categories(),
-        SizedBox(height: 40),
+        SizedBox(height: 50),
       ],
     );
   }

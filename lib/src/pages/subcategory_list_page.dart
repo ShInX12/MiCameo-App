@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:mi_cameo/src/bloc/talents_by_category_bloc.dart';
 import 'package:mi_cameo/src/helpers/api_base_helper.dart';
 import 'package:mi_cameo/src/models/user_model.dart';
@@ -73,19 +74,26 @@ class _TalentList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _talentListController.addListener(() {
-      if (_talentListController.position.pixels >= _talentListController.position.maxScrollExtent - 200) {
+      if (_talentListController.position.pixels >=
+          _talentListController.position.maxScrollExtent - 200) {
         bloc.fetchTalentList(category, false);
       }
     });
 
-    return GridView.builder(
+    final size = MediaQuery.of(context).size;
+    final int crossAxisCount = ((size.width / 135) - 1).round();
+
+    if (crossAxisCount >= 3) bloc.fetchTalentList(category, false);
+
+    return StaggeredGridView.countBuilder(
       itemCount: talents.length,
+      crossAxisCount: crossAxisCount,
+      crossAxisSpacing: 2,
+      mainAxisSpacing: 2,
+      addAutomaticKeepAlives: false,
       controller: _talentListController,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.925,
-      ),
-      itemBuilder: (BuildContext context, int i) {
+      staggeredTileBuilder: (index) => StaggeredTile.extent(1, 192),
+      itemBuilder: (context, i) {
         return TalentCard(
           name: talents[i].user.username,
           ocupation: talents[i].description,

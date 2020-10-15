@@ -75,10 +75,8 @@ class __RequestFormState extends State<_RequestForm> {
       if (client != null) {
         order.talent = widget.talentName;
         order.emailClient = client.user.email;
-        order.phoneNumber = client.phoneNumber;
         order.orderState = '1';
         order.isPublic = isPublic ? 'True' : 'False';
-        print(order);
         Map result = await ordersRepository.createOrder(order);
 
         showDialog(

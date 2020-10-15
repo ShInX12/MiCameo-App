@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:mi_cameo/src/bloc/talents_by_category_bloc.dart';
 import 'package:mi_cameo/src/helpers/api_base_helper.dart';
@@ -154,14 +155,38 @@ class _TalentList extends StatelessWidget {
       }
     });
     if (talents.length == 0) return Center(child: Text('No hay resultados'));
-    return GridView.builder(
+    // return GridView.builder(
+    //   itemCount: talents.length,
+    //   controller: _talentListController,
+    //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    //     crossAxisCount: 2,
+    //     childAspectRatio: 0.925,
+    //   ),
+    //   itemBuilder: (BuildContext context, int i) {
+    //     return TalentCard(
+    //       name: talents[i].user.username,
+    //       ocupation: talents[i].description,
+    //       urlImage: talents[i].profileImage,
+    //       price: talents[i].price,
+    //       onTap: () => Navigator.pushNamed(context, 'talent', arguments: talents[i]),
+    //     );
+    //   },
+    // );
+
+    final size = MediaQuery.of(context).size;
+    final int crossAxisCount = ((size.width / 135) - 1).round();
+
+    if (crossAxisCount >= 3) bloc.fetchTalentList(category, false);
+
+    return StaggeredGridView.countBuilder(
       itemCount: talents.length,
+      crossAxisCount: crossAxisCount,
+      crossAxisSpacing: 2,
+      mainAxisSpacing: 2,
+      addAutomaticKeepAlives: false,
       controller: _talentListController,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.925,
-      ),
-      itemBuilder: (BuildContext context, int i) {
+      staggeredTileBuilder: (index) => StaggeredTile.extent(1, 192),
+      itemBuilder: (context, i) {
         return TalentCard(
           name: talents[i].user.username,
           ocupation: talents[i].description,
