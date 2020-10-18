@@ -111,7 +111,7 @@ class ClientRepository {
     try {
       final Map<String, String> body = {'access_token': accessToken, 'social_network': 'facebook'};
 
-      final urlFull = Uri.https(baseUrl, 'users/auth/social-login');
+      final urlFull = Uri.https(baseUrl, 'api/auth/users/social-login');
       final response = await http.post(urlFull, body: body);
 
       if (response.statusCode == 200) {

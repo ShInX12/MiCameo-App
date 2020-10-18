@@ -51,5 +51,13 @@
 	<string>Permiso para usar el micrófono</string>
 	<!-- End Image Picker -->
 
+	<!-- Video Player -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<!-- End Video Player -->
+
 </dict>
 </plist>

@@ -12,6 +12,9 @@ class RequestCameoAsPresent extends StatelessWidget {
   Widget build(BuildContext context) {
     final String talentName = ModalRoute.of(context).settings.arguments;
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Solicitar Cameo', style: TextStyle(color: Colors.black87)),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -105,7 +108,7 @@ class __RequestFormState extends State<_RequestForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          SizedBox(height: 40),
+          SizedBox(height: 20),
           _Label('De:'),
           TextFormField(
             textInputAction: TextInputAction.next,
@@ -176,9 +179,7 @@ class __RequestFormState extends State<_RequestForm> {
               Switch(
                 value: isPublic,
                 onChanged: (bool value) {
-                  setState(() {
-                    isPublic = value;
-                  });
+                  setState(() => isPublic = value);
                 },
               ),
             ],
@@ -196,9 +197,9 @@ class __RequestFormState extends State<_RequestForm> {
           ),
           SizedBox(height: 30),
           ButtonType1(
-            text: 'Continuar',
+            text: 'Enviar solicitud',
             colorPurple: true,
-            onPressed: () => _continue(),
+            onPressed: _continue,
           ),
           SizedBox(height: 30),
         ],
@@ -215,7 +216,7 @@ class _Instructions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      maxLines: 6,
+      maxLines: 5,
       onSaved: onSaved,
       validator: validator,
       style: TextStyle(

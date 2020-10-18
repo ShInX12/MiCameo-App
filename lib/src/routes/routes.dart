@@ -16,6 +16,7 @@ import 'package:mi_cameo/src/pages/search_page.dart';
 import 'package:mi_cameo/src/pages/select_cameo_page.dart';
 import 'package:mi_cameo/src/pages/subcategory_list_page.dart';
 import 'package:mi_cameo/src/pages/talent_page.dart';
+import 'package:mi_cameo/src/pages/video_player_page.dart';
 
 Map<String, WidgetBuilder> applicationRoutes(){
 
@@ -37,6 +38,7 @@ Map<String, WidgetBuilder> applicationRoutes(){
     'select_cameo': (BuildContext context) => SelectCameoPage(),
     'subcategory_list': (BuildContext context) => SubcategoryList(),
     'edit_profile': (BuildContext context) => EditProfilePage(),
+    'video_player': (BuildContext context) => VideoPlayerPage(),
   };
 
 }

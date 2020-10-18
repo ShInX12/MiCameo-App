@@ -1,7 +1,8 @@
 import 'dart:io';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:mi_cameo/src/models/cameo_model.dart';
 import 'package:mi_cameo/src/repository/cameo_repository.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:mi_cameo/src/widgets/video_preview.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,6 +51,48 @@ class ProfilePage extends StatelessWidget {
         ],
       ),
     );
+    // return Scaffold(
+    //   body: Column(
+    //     children: <Widget>[
+    //       Stack(
+    //         alignment: Alignment.topCenter,
+    //         children: [
+    //           _Background(),
+    //           Column(children: [SizedBox(height: 16), _Logo()]),
+    //           Row(
+    //             mainAxisAlignment: MainAxisAlignment.end,
+    //             children: [_Options()],
+    //           ),
+    //           Column(
+    //             children: [
+    //               SizedBox(height: 90),
+    //               FutureBuilder(
+    //                 future: clientRepository.getCurrentClient(prefs.accessToken),
+    //                 builder: (context, AsyncSnapshot<Client> snapshot) {
+    //                   if (snapshot.connectionState == ConnectionState.waiting) {
+    //                     return CircularProgressIndicator();
+    //                   } else {
+    //                     if (snapshot.hasData) {
+    //                       return _ColumnAvatar(client: snapshot.data);
+    //                     } else {
+    //                       return Text(
+    //                         'No se pudo obtener el usuario',
+    //                         style: TextStyle(color: Colors.white),
+    //                       );
+    //                     }
+    //                   }
+    //                 },
+    //               ),
+    //               SizedBox(height: 20),
+    //             ],
+    //           ),
+    //         ],
+    //       ),
+    //       _Title(),
+    //       Expanded(child: _Cameos()),
+    //     ],
+    //   ),
+    // );
   }
 }
 
@@ -65,9 +108,14 @@ class _Logo extends StatelessWidget {
 class _Title extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Text(
-      'Mis Cameos',
-      style: Theme.of(context).textTheme.headline6,
+    return Column(
+      children: [
+        Text(
+          'Mis Cameos',
+          style: Theme.of(context).textTheme.headline6,
+        ),
+        SizedBox(height: 10),
+      ],
     );
   }
 }
@@ -296,55 +344,31 @@ class __AvatarImageState extends State<_AvatarImage> {
   }
 }
 
-// class _Cameos extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       margin: EdgeInsets.only(top: 320),
-//       child: ListView.builder(
-//         physics: BouncingScrollPhysics(),
-//         itemCount: 2,
-//         itemBuilder: (BuildContext context, int index) {
-//           return Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//             children: <Widget>[
-//               VideoCard(
-//                 urlImage: 'https://pbs.twimg.com/media/EZzYzLvWsAAk6jR.jpg',
-//               ),
-//               VideoCard(
-//                 urlImage: 'https://pbs.twimg.com/media/EZzYzLvWsAAk6jR.jpg',
-//               ),
-//               VideoCard(
-//                 urlImage: 'https://pbs.twimg.com/media/EZzYzLvWsAAk6jR.jpg',
-//               ),
-//             ],
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
-
 class _Cameos extends StatelessWidget {
   final _cameoRepository = new CameoRepository();
 
-  Future<void> _launchBrowser(String url) async {
-    if (await canLaunch(url)) {
-      await launch(
-        url,
-        forceSafariVC: false,
-        forceWebView: false,
-        headers: <String, String>{},
-      );
-    } else {
-      throw 'No se pudo lanzar el navegador';
-    }
-  }
+  // Future<void> _launchBrowser(String url) async {
+  //   if (await canLaunch(url)) {
+  //     await launch(
+  //       url,
+  //       forceSafariVC: false,
+  //       forceWebView: false,
+  //       headers: <String, String>{},
+  //     );
+  //   } else {
+  //     throw 'No se pudo lanzar el navegador';
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final int crossAxisCount = ((size.width / 127) - 1).round();
+
+    // if (crossAxisCount >= 3) bloc.fetchTalentList(category, false);
+
     return Container(
-      margin: EdgeInsets.only(top: 320),
+      margin: EdgeInsets.only(top: 325),
       child: FutureBuilder(
         future: _cameoRepository.fetchCameos(),
         builder: (context, AsyncSnapshot<List<Cameo>> snapshot) {
@@ -359,13 +383,36 @@ class _Cameos extends StatelessWidget {
               else if (snapshot.hasData) {
                 if (snapshot.data.length == 0)
                   return Center(child: Text('Todavía no tienes cameos'));
-                return ListView.builder(
+                // return ListView.builder(
+                //   itemCount: snapshot.data.length,
+                //   itemBuilder: (context, i) {
+                //     return ListTile(
+                //       title: Text('Id: ${snapshot.data[i].id}'),
+                //       subtitle: Text(snapshot.data[i].urlVideo),
+                //       // onTap: () => _launchBrowser(snapshot.data[i].urlVideo),
+                //       onTap: () => Navigator.pushNamed(
+                //         context,
+                //         'video_player',
+                //         arguments: snapshot.data[i].urlVideo,
+                //       ),
+                //     );
+                //   },
+                // );
+                return StaggeredGridView.countBuilder(
                   itemCount: snapshot.data.length,
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: 2,
+                  mainAxisSpacing: 2,
+                  addAutomaticKeepAlives: false,
+                  staggeredTileBuilder: (index) => StaggeredTile.extent(1, 200),
                   itemBuilder: (context, i) {
-                    return ListTile(
-                      title: Text('Id: ${snapshot.data[i].id}'),
-                      subtitle: Text(snapshot.data[i].urlVideo),
-                      onTap: () => _launchBrowser(snapshot.data[i].urlVideo),
+                    return VideoPreview(
+                      url: snapshot.data[i].urlVideo,
+                      onTap: () => Navigator.pushNamed(
+                        context,
+                        'video_player',
+                        arguments: snapshot.data[i].urlVideo,
+                      ),
                     );
                   },
                 );
