@@ -182,9 +182,9 @@ class ClientRepository {
     }
   }
 
-  Future<User> getCurrentUser(String token) async {
+  Future<User> getCurrentUser() async {
     try {
-      Map<String, String> headers = {'Authorization': 'Bearer $token'};
+      Map<String, String> headers = {'Authorization': 'Bearer ${prefs.accessToken}'};
       final urlFull = Uri.https(baseUrl, 'api/users/me');
       final response = await http.get(urlFull, headers: headers);
 
@@ -198,9 +198,9 @@ class ClientRepository {
     }
   }
 
-  Future<Client> getCurrentClient(String token) async {
+  Future<Client> getCurrentClient() async {
     try {
-      Map<String, String> headers = {'Authorization': 'Bearer $token'};
+      Map<String, String> headers = {'Authorization': 'Bearer ${prefs.accessToken}'};
 
       final urlFull = Uri.https(baseUrl, 'api/client/me');
       final response = await http.get(urlFull, headers: headers);

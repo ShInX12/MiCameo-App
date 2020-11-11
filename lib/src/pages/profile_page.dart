@@ -9,12 +9,10 @@ import 'package:flutter/services.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mi_cameo/src/models/user_model.dart';
-import 'package:mi_cameo/src/preferences/user_preferences.dart';
 import 'package:mi_cameo/src/repository/client_repository.dart';
 import 'package:mi_cameo/src/themes/theme.dart';
 
 class ProfilePage extends StatelessWidget {
-  final prefs = UserPreferences();
   final clientRepository = ClientRepository();
 
   @override
@@ -29,7 +27,7 @@ class ProfilePage extends StatelessWidget {
           Positioned(
             top: 90,
             child: FutureBuilder(
-              future: clientRepository.getCurrentClient(prefs.accessToken),
+              future: clientRepository.getCurrentClient(),
               builder: (context, AsyncSnapshot<Client> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return CircularProgressIndicator();

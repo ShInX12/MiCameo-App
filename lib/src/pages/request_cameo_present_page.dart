@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mi_cameo/src/models/ocassion_model.dart';
 import 'package:mi_cameo/src/models/order_model.dart';
 import 'package:mi_cameo/src/models/user_model.dart';
-import 'package:mi_cameo/src/preferences/user_preferences.dart';
 import 'package:mi_cameo/src/repository/client_repository.dart';
 import 'package:mi_cameo/src/repository/orders_repository.dart';
 import 'package:mi_cameo/src/widgets/input_form.dart';
@@ -42,29 +42,26 @@ class __RequestFormState extends State<_RequestForm> {
   final order = new BasicOrder();
   final clientRepository = ClientRepository();
   final ordersRepository = OrdersRepository();
-  final prefs = UserPreferences();
   Client client;
   bool isPublic = false;
   final phoneNumberController = TextEditingController();
   final nameController = TextEditingController();
 
-  final occasions = <String>[
-    'Cumpleaños',
-    'Navidad',
-    'Aniversario',
-    'Casual',
-    'Agradecimientos',
-    'Ninguno',
-    'Otro'
+  var occasions = <Ocassion>[
+    Ocassion(name: 'Seleccionar...'),
   ];
 
   @override
   void initState() {
     super.initState();
-    clientRepository.getCurrentClient(prefs.accessToken).then((value) {
+    clientRepository.getCurrentClient().then((value) {
       client = value;
       setState(() {});
       _setText();
+    });
+    ordersRepository.fetchOcassions().then((value) {
+      occasions.addAll(value);
+      setState(() {});
     });
   }
 
@@ -159,14 +156,17 @@ class __RequestFormState extends State<_RequestForm> {
               SizedBox(width: 30),
               Expanded(
                 child: DropdownButtonFormField(
-                  value: 'Cumpleaños',
-                  items: occasions.map((e) => DropdownMenuItem(child: Text(e), value: e)).toList(),
-                  onChanged: (value) {
-                    this.order.occasion = value;
+                  value: 'Seleccionar...',
+                  items: occasions
+                      .map((e) => DropdownMenuItem(child: Text(e.name), value: e.name))
+                      .toList(),
+                  validator: (value) {
+                    if (value == 'Seleccionar...') return 'Selecciona una ocasión';
+                    _formKey.currentState.save();
+                    return null;
                   },
-                  onSaved: (value) {
-                    this.order.occasion = value;
-                  },
+                  onChanged: (value) => this.order.occasion = value,
+                  onSaved: (value) => this.order.occasion = value,
                 ),
               ),
             ],

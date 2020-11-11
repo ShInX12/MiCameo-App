@@ -92,7 +92,7 @@ class _TalentList extends StatelessWidget {
       mainAxisSpacing: 2,
       addAutomaticKeepAlives: false,
       controller: _talentListController,
-      staggeredTileBuilder: (index) => StaggeredTile.extent(1, 192),
+      staggeredTileBuilder: (index) => StaggeredTile.extent(1, 196),
       itemBuilder: (context, i) {
         return TalentCard(
           name: talents[i].user.username,

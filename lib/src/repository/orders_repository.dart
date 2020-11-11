@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:mi_cameo/src/helpers/api_base_helper.dart';
+import 'package:mi_cameo/src/models/ocassion_model.dart';
 import 'package:mi_cameo/src/models/order_model.dart';
 
 class OrdersRepository {
@@ -25,5 +26,19 @@ class OrdersRepository {
     final Map<String, String> params = {'email': email};
     final List response = await _helper.get(url: 'api/orders/client', params: params);
     return response.map((e) => Order.fromJson(e)).toList();
+  }
+
+  Future<List<Ocassion>> fetchOcassions() async {
+    try {
+      final urlFull = Uri.https(baseUrl, 'api/orders/occasion-list');
+      final response = await http.get(urlFull);
+      if (response.statusCode == 200) {
+        return ocassionsFromBodyBytes(response.bodyBytes);
+      } else {
+        return [];
+      }
+    } catch (e) {
+      return [];
+    }
   }
 }

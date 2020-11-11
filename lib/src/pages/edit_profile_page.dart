@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mi_cameo/src/models/user_model.dart';
-import 'package:mi_cameo/src/preferences/user_preferences.dart';
 import 'package:mi_cameo/src/repository/client_repository.dart';
 import 'package:mi_cameo/src/widgets/widgets.dart';
 
@@ -20,10 +19,9 @@ class _Body extends StatelessWidget {
   const _Body();
   @override
   Widget build(BuildContext context) {
-    final prefs = UserPreferences();
     final clientRepository = ClientRepository();
     return FutureBuilder(
-      future: clientRepository.getCurrentClient(prefs.accessToken),
+      future: clientRepository.getCurrentClient(),
       builder: (context, AsyncSnapshot<Client> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -158,7 +156,7 @@ class __ProfileFormState extends State<_ProfileForm> {
           ButtonType1(
             text: 'Guardar',
             colorPurple: true,
-            onPressed: () => _save(),
+            onPressed: _save,
           ),
           SizedBox(height: 20),
         ],
