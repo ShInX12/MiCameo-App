@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:mi_cameo/src/helpers/helpers.dart';
 import 'package:mi_cameo/src/helpers/api_base_helper.dart';
 import 'package:mi_cameo/src/models/ocassion_model.dart';
 import 'package:mi_cameo/src/models/order_model.dart';
@@ -14,7 +15,7 @@ class OrdersRepository {
       final urlFull = Uri.https(baseUrl, 'api/orders/');
       final Map<String, String> headers = {'Content-Type': 'application/json'};
       final response = await http.post(urlFull, body: json.encode(body), headers: headers);
-      return {'status': response.statusCode, 'body': response.body};
+      return {'status': response.statusCode, 'body': errorsMapping(response.body)};
     } on SocketException {
       return {'status': 600, 'body': 'No hay conexión a internet'};
     } catch (e) {

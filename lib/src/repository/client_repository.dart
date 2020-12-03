@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:flutter_twitter_login/flutter_twitter_login.dart';
 import 'package:mi_cameo/src/helpers/api_base_helper.dart';
+import 'package:mi_cameo/src/helpers/helpers.dart';
 import 'package:mi_cameo/src/models/user_model.dart';
 import 'package:mi_cameo/src/preferences/user_preferences.dart';
 
@@ -76,7 +76,7 @@ class ClientRepository {
         prefs.refreshToken = data['refresh'];
         prefs.email = email;
       }
-      return {'status': response.statusCode, 'body': response.body};
+      return {'status': response.statusCode, 'body': errorsMapping(response.body)};
     } on SocketException {
       return {'status': 600, 'body': 'No hay conexión a internet'};
     } catch (e) {
@@ -128,59 +128,59 @@ class ClientRepository {
     }
   }
 
-  Future<bool> loginWithTwitter() async {
-    final _twitterLogin = new TwitterLogin(
-      consumerKey: 'uLduy0FyxqCGqnmDNUwJx4LFF',
-      consumerSecret: 'ZgjpsdilbRw3j3lAxgYtlkEbVPdX5GmMgqVio6eLESacZyd8TM',
-    );
+  // Future<bool> loginWithTwitter() async {
+  //   final _twitterLogin = new TwitterLogin(
+  //     consumerKey: '',
+  //     consumerSecret: '',
+  //   );
 
-    final loginResult = await _twitterLogin.authorize();
+  //   final loginResult = await _twitterLogin.authorize();
 
-    switch (loginResult.status) {
-      case TwitterLoginStatus.loggedIn:
-        final session = loginResult.session;
-        print('--> Sesión en Twitter iniciada con exito <--');
-        bool login = await _authenticateTwitterToken(session.token, session.secret);
-        return login;
-        break;
-      case TwitterLoginStatus.cancelledByUser:
-        print('Cancelado por el usuario');
-        return false;
-        break;
-      case TwitterLoginStatus.error:
-        print('Ha ocurrido un error');
-        print(loginResult.errorMessage);
-        return false;
-        break;
-    }
-    return false;
-  }
+  //   switch (loginResult.status) {
+  //     case TwitterLoginStatus.loggedIn:
+  //       final session = loginResult.session;
+  //       print('--> Sesión en Twitter iniciada con exito <--');
+  //       bool login = await _authenticateTwitterToken(session.token, session.secret);
+  //       return login;
+  //       break;
+  //     case TwitterLoginStatus.cancelledByUser:
+  //       print('Cancelado por el usuario');
+  //       return false;
+  //       break;
+  //     case TwitterLoginStatus.error:
+  //       print('Ha ocurrido un error');
+  //       print(loginResult.errorMessage);
+  //       return false;
+  //       break;
+  //   }
+  //   return false;
+  // }
 
-  Future _authenticateTwitterToken(String accessToken, String secretToken) async {
-    try {
-      final Map<String, String> body = {
-        'access_token': accessToken,
-        'access_token_secret': secretToken,
-        'social_network': 'twitter',
-        'email': 'sergio6006@hotmail.com',
-      };
+  // Future _authenticateTwitterToken(String accessToken, String secretToken) async {
+  //   try {
+  //     final Map<String, String> body = {
+  //       'access_token': accessToken,
+  //       'access_token_secret': secretToken,
+  //       'social_network': 'twitter',
+  //       'email': 'sergio6006@hotmail.com',
+  //     };
 
-      final urlFull = Uri.https(baseUrl, 'users/auth/social-login');
-      final response = await http.post(urlFull, body: body);
+  //     final urlFull = Uri.https(baseUrl, 'users/auth/social-login');
+  //     final response = await http.post(urlFull, body: body);
 
-      if (response.statusCode == 200) {
-        final Map data = json.decode(response.body);
-        prefs.initPrefs();
-        prefs.accessToken = data['access'];
-        prefs.refreshToken = data['refresh'];
-        return true;
-      } else {
-        return false;
-      }
-    } catch (e) {
-      return false;
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       final Map data = json.decode(response.body);
+  //       prefs.initPrefs();
+  //       prefs.accessToken = data['access'];
+  //       prefs.refreshToken = data['refresh'];
+  //       return true;
+  //     } else {
+  //       return false;
+  //     }
+  //   } catch (e) {
+  //     return false;
+  //   }
+  // }
 
   Future<User> getCurrentUser() async {
     try {

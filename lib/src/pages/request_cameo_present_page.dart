@@ -88,7 +88,7 @@ class __RequestFormState extends State<_RequestForm> {
                   ? 'Orden creada correctamente'
                   : 'Ha ocurrido un error (${result['status']})',
               content: result['status'] == 201
-                  ? 'En unos momentos obtendras la respuesta del talento'
+                  ? 'En unos momentos obtendrás la respuesta del talento'
                   : result['body'],
               onPressed: () => Navigator.pop(context),
             );
