@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
               break;
             default:
               if (snapshot.hasError)
-                return Scaffold(body: Center(child: Text('Error')));
+                return InitialPage();
               else if (snapshot.data == null)
                 return InitialPage();
               else

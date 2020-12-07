@@ -183,6 +183,9 @@ class ClientRepository {
   // }
 
   Future<User> getCurrentUser() async {
+
+    if (prefs.accessToken == '') return null;
+
     try {
       Map<String, String> headers = {'Authorization': 'Bearer ${prefs.accessToken}'};
       final urlFull = Uri.https(baseUrl, 'api/users/me');
@@ -199,6 +202,9 @@ class ClientRepository {
   }
 
   Future<Client> getCurrentClient() async {
+
+    if (prefs.accessToken == '' ) return null;
+
     try {
       Map<String, String> headers = {'Authorization': 'Bearer ${prefs.accessToken}'};
 
