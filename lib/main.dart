@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mi_cameo/src/models/user_model.dart';
 import 'package:mi_cameo/src/pages/initial_page.dart';
+import 'package:mi_cameo/src/pages/loading_page.dart';
 import 'package:mi_cameo/src/pages/navigation_bar_page.dart';
 import 'package:mi_cameo/src/preferences/user_preferences.dart';
 import 'package:mi_cameo/src/repository/client_repository.dart';
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
             case ConnectionState.waiting:
-              return Scaffold();
+              return LoadingPage();
               break;
             default:
               if (snapshot.hasError)
