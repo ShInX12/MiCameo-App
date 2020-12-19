@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:mi_cameo/src/helpers/api_base_helper.dart';
 import 'package:mi_cameo/src/helpers/helpers.dart';
 import 'package:mi_cameo/src/models/user_model.dart';
 import 'package:mi_cameo/src/preferences/user_preferences.dart';
+import 'package:mi_cameo/src/state/client_state.dart';
+import 'package:provider/provider.dart';
 
 class ClientRepository {
   final prefs = UserPreferences();
@@ -33,7 +36,7 @@ class ClientRepository {
       final urlFull = Uri.https(baseUrl, 'api/users/${user.username}/');
       final response = await http.patch(urlFull, body: json.encode(body), headers: headers);
       if (response.statusCode == 200) {
-        final jsonUser = json.decode(response.body);
+        final jsonUser = json.decode(utf8.decode(response.bodyBytes));
         return User.fromJson(jsonUser);
       }
       return null;
@@ -52,7 +55,7 @@ class ClientRepository {
       final urlFull = Uri.https(baseUrl, 'api/client/${client.user.username}/');
       final response = await http.patch(urlFull, body: json.encode(body), headers: headers);
       if (response.statusCode == 200) {
-        final Map jsonClient = json.decode(response.body);
+        final Map jsonClient = json.decode(utf8.decode(response.bodyBytes));
         return Client.fromJson(jsonClient);
       }
       return null;
@@ -67,14 +70,13 @@ class ClientRepository {
       final urlFull = Uri.https(baseUrl, 'api/auth/users/login');
       final response = await http.post(urlFull, body: body);
       if (response.statusCode == 200) {
-        final Map data = json.decode(response.body);
+        final Map data = json.decode(utf8.decode(response.bodyBytes));
         if (data['is_talent'] == true) {
           return {'status': 401, 'body': 'Ya estas registrado como talento'};
         }
         prefs.initPrefs();
         prefs.accessToken = data['access'];
         prefs.refreshToken = data['refresh'];
-        prefs.email = email;
       }
       return {'status': response.statusCode, 'body': errorsMapping(response.body)};
     } on SocketException {
@@ -183,7 +185,6 @@ class ClientRepository {
   // }
 
   Future<User> getCurrentUser() async {
-
     if (prefs.accessToken == '') return null;
 
     try {
@@ -192,7 +193,7 @@ class ClientRepository {
       final response = await http.get(urlFull, headers: headers);
 
       if (response.statusCode == 200) {
-        final Map jsonUser = json.decode(response.body);
+        final Map jsonUser = json.decode(utf8.decode(response.bodyBytes));
         return User.fromJson(jsonUser);
       }
       return null;
@@ -201,9 +202,8 @@ class ClientRepository {
     }
   }
 
-  Future<Client> getCurrentClient() async {
-
-    if (prefs.accessToken == '' ) return null;
+  Future<bool> getCurrentClient(BuildContext context) async {
+    if (prefs.accessToken == '') return false;
 
     try {
       Map<String, String> headers = {'Authorization': 'Bearer ${prefs.accessToken}'};
@@ -212,12 +212,14 @@ class ClientRepository {
       final response = await http.get(urlFull, headers: headers);
 
       if (response.statusCode == 200) {
-        final Map jsonClient = json.decode(response.body);
-        return Client.fromJson(jsonClient);
+        final Map jsonClient = json.decode(utf8.decode(response.bodyBytes));
+        Provider.of<ClientState>(context, listen: false).client = Client.fromJson(jsonClient);
+        prefs.email = Client.fromJson(jsonClient).user.email;
+        return true;
       }
-      return null;
+      return false;
     } catch (e) {
-      return null;
+      return false;
     }
   }
 }

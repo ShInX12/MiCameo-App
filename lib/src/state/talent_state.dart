@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mi_cameo/src/models/user_model.dart';
 
 class TalentState with ChangeNotifier {
-  String _name;
+  String _userName;
+  String _firstName;
+  String _lastName;
   bool _favorite = false;
   int _reviews;
   int _responseDays = 1;
@@ -13,7 +15,9 @@ class TalentState with ChangeNotifier {
   List<String> _categories;
 
   TalentState(Talent talent) {
-    this._name = talent.user.username;
+    this._userName = talent.user.username;
+    this._firstName = talent.user.firstName;
+    this._lastName = talent.user.lastName;
     this._description = talent.description;
     this._reviews = 23;
     this._responseDays = talent.responseDays;
@@ -24,12 +28,28 @@ class TalentState with ChangeNotifier {
     this._categories = talent.categories;
   }
 
-  String get name => this._name;
+  String get userName => this._userName;
 
-  set name(String name) {
-    this._name = name;
+  set userName(String userName) {
+    this._userName = userName;
     // notifyListeners();
   }
+
+  String get firstName => this._firstName;
+
+  set firstName(String firstName) {
+    this._firstName = firstName;
+    // notifyListeners();
+  }
+
+  String get lastName => this._lastName;
+
+  set lastName(String lastName) {
+    this._lastName = lastName;
+    // notifyListeners();
+  }
+
+  String get fullName => this._firstName + ' ' + this._lastName;
 
   bool get favorite => this._favorite;
 

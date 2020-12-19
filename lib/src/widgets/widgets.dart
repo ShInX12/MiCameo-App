@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:mi_cameo/src/themes/theme.dart';
@@ -68,34 +71,38 @@ class FlatButtonType1 extends StatelessWidget {
   }
 }
 
-class CustomAlertDialog extends StatelessWidget {
-  final BuildContext context;
-  final String title;
-  final String content;
-  final String buttonText;
-  final Function onPressed;
+showCustomAlertDialog(BuildContext context, String title, String content) {
 
-  const CustomAlertDialog({
-    @required this.context,
-    this.title = '',
-    this.content = '',
-    this.buttonText = 'Aceptar',
-    @required this.onPressed,
-  });
+  if (Platform.isIOS) {
+    return showCupertinoDialog(
+      context: context,
+      builder: (_) => CupertinoAlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: <Widget>[
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            child: Text('Aceptar'),
+            onPressed: () => Navigator.pop(context),
+          )
+        ],
+      ),
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
       title: Text(title),
       content: Text(content, style: Theme.of(context).textTheme.bodyText1),
       actions: <Widget>[
         FlatButton(
-          child: Text(buttonText),
-          onPressed: onPressed,
+          child: Text('Aceptar'),
+          onPressed: () => Navigator.pop(context),
         )
       ],
-    );
-  }
+    ),
+  );
 }
 
 class ErrorMessage extends StatelessWidget {

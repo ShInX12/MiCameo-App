@@ -9,6 +9,7 @@ class BasicOrder {
         this.phoneNumber,
         this.instructions,
         this.orderState,
+        this.orderPrice,
     });
 
     String emailClient;
@@ -20,6 +21,7 @@ class BasicOrder {
     String phoneNumber;
     String instructions;
     String orderState;
+    int orderPrice;
 
     factory BasicOrder.fromJson(Map<String, dynamic> json) => BasicOrder(
         emailClient : json["email_client"],
@@ -31,6 +33,7 @@ class BasicOrder {
         phoneNumber : json["phone_number"],
         instructions: json["instructions"],
         orderState  : json["order_state"],
+        orderPrice  : json["order_price"],
     );
 
     Map<String, dynamic> toJson() => {
@@ -43,6 +46,7 @@ class BasicOrder {
         "phone_number": phoneNumber,
         "instructions": instructions,
         "order_state" : orderState,
+        "order_price" : orderPrice,
     };
 }
 

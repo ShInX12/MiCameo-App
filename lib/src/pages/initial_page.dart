@@ -23,20 +23,11 @@ class _Body extends StatelessWidget {
     final clientRepository = new ClientRepository();
     var isLoggedIn = await clientRepository.loginWithFacebook();
     if (isLoggedIn) {
+      await clientRepository.getCurrentClient(context);
       Navigator.of(context).pushNamedAndRemoveUntil(
           'navigation_bar', (Route<dynamic> route) => false);
     } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CustomAlertDialog(
-            context: context,
-            title: 'Ha ocurrido un error',
-            content: 'Vuelve a intentarlo',
-            onPressed: () => Navigator.pop(context),
-          );
-        },
-      );
+      showCustomAlertDialog(context, 'Ha ocurrido un error', 'Vuelve a intentarlo');
     }
   }
 
@@ -47,17 +38,7 @@ class _Body extends StatelessWidget {
   //     Navigator.of(context).pushNamedAndRemoveUntil(
   //         'navigation_bar', (Route<dynamic> route) => false);
   //   } else {
-  //     showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return CustomAlertDialog(
-  //           context: context,
-  //           title: 'Ha ocurrido un error',
-  //           content: 'Vuelve a intentarlo',
-  //           onPressed: () => Navigator.pop(context),
-  //         );
-  //       },
-  //     );
+  //     showCustomAlertDialog(context, 'Ha ocurrido un error', 'Vuelve a intentarlo');
   //   }
   // }
 

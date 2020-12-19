@@ -95,7 +95,8 @@ class _TalentList extends StatelessWidget {
       staggeredTileBuilder: (index) => StaggeredTile.extent(1, 196),
       itemBuilder: (context, i) {
         return TalentCard(
-          name: talents[i].user.username,
+          userName: talents[i].user.username,
+          title: talents[i].user.firstName + ' ' + talents[i].user.lastName,
           ocupation: talents[i].description,
           urlImage: talents[i].profileImage,
           price: talents[i].price,

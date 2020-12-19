@@ -4,13 +4,15 @@ import 'package:mi_cameo/src/models/order_model.dart';
 import 'package:mi_cameo/src/models/user_model.dart';
 import 'package:mi_cameo/src/repository/client_repository.dart';
 import 'package:mi_cameo/src/repository/orders_repository.dart';
+import 'package:mi_cameo/src/state/client_state.dart';
 import 'package:mi_cameo/src/widgets/input_form.dart';
 import 'package:mi_cameo/src/widgets/widgets.dart';
+import 'package:provider/provider.dart';
 
 class RequestCameoAsPresent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final String talentName = ModalRoute.of(context).settings.arguments;
+    final Map arguments = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
         title: Text('Solicitar Cameo', style: TextStyle(color: Colors.black87)),
@@ -19,7 +21,7 @@ class RequestCameoAsPresent extends StatelessWidget {
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 25),
-            child: _RequestForm(talentName),
+            child: _RequestForm(arguments['userName'], arguments['price']),
           ),
         ),
       ),
@@ -30,8 +32,9 @@ class RequestCameoAsPresent extends StatelessWidget {
 // Define un widget de formulario personalizado
 class _RequestForm extends StatefulWidget {
   final String talentName;
+  final String talentPrice;
 
-  const _RequestForm(this.talentName);
+  const _RequestForm(this.talentName, this.talentPrice);
   @override
   __RequestFormState createState() => __RequestFormState();
 }
@@ -47,6 +50,8 @@ class __RequestFormState extends State<_RequestForm> {
   final phoneNumberController = TextEditingController();
   final nameController = TextEditingController();
 
+  bool _loading = false;
+
   var occasions = <Ocassion>[
     Ocassion(name: 'Seleccionar...'),
   ];
@@ -54,11 +59,8 @@ class __RequestFormState extends State<_RequestForm> {
   @override
   void initState() {
     super.initState();
-    clientRepository.getCurrentClient().then((value) {
-      client = value;
-      setState(() {});
-      _setText();
-    });
+    this.client = Provider.of<ClientState>(context, listen: false).client;
+    _setText();
     ordersRepository.fetchOcassions().then((value) {
       occasions.addAll(value);
       setState(() {});
@@ -73,26 +75,26 @@ class __RequestFormState extends State<_RequestForm> {
   void _continue() async {
     if (_formKey.currentState.validate()) {
       if (client != null) {
+        setState(() => this._loading = true);
+
         order.talent = widget.talentName;
+        order.orderPrice = int.parse(widget.talentPrice.split('.')[0].trim());
         order.emailClient = client.user.email;
         order.orderState = '1';
         order.isPublic = isPublic ? 'True' : 'False';
         Map result = await ordersRepository.createOrder(order);
 
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CustomAlertDialog(
-              context: context,
-              title: result['status'] == 201
-                  ? 'Orden creada correctamente'
-                  : 'Ha ocurrido un error (${result['status']})',
-              content: result['status'] == 201
-                  ? 'En unos momentos obtendrás la respuesta del talento'
-                  : result['body'],
-              onPressed: () => Navigator.pop(context),
-            );
-          },
+        FocusScope.of(context).unfocus();
+        setState(() => this._loading = false);
+
+        showCustomAlertDialog(
+          context,
+          result['status'] == 201
+              ? 'Orden creada correctamente'
+              : 'Ha ocurrido un error (${result['status']})',
+          result['status'] == 201
+              ? 'Mas adelante obtendrás la respuesta del talento'
+              : result['body'],
         );
       }
     }
@@ -197,9 +199,9 @@ class __RequestFormState extends State<_RequestForm> {
           ),
           SizedBox(height: 30),
           ButtonType1(
-            text: 'Enviar solicitud',
+            text: _loading ? 'Enviando...' : 'Enviar solicitud',
             colorPurple: true,
-            onPressed: _continue,
+            onPressed: _loading ? () {} : _continue,
           ),
           SizedBox(height: 30),
         ],

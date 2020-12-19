@@ -2,7 +2,9 @@ import 'dart:io';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:mi_cameo/src/models/cameo_model.dart';
 import 'package:mi_cameo/src/repository/cameo_repository.dart';
+import 'package:mi_cameo/src/state/client_state.dart';
 import 'package:mi_cameo/src/widgets/video_preview.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,73 +26,12 @@ class ProfilePage extends StatelessWidget {
           Positioned(top: 0, child: _Background()),
           Positioned(top: 16, child: _Logo()),
           Positioned(top: 5, right: -12, child: _Options()),
-          Positioned(
-            top: 90,
-            child: FutureBuilder(
-              future: clientRepository.getCurrentClient(),
-              builder: (context, AsyncSnapshot<Client> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else {
-                  if (snapshot.hasData) {
-                    return _ColumnAvatar(client: snapshot.data);
-                  } else {
-                    return Text(
-                      'No se pudo obtener el usuario',
-                      style: TextStyle(color: Colors.white),
-                    );
-                  }
-                }
-              },
-            ),
-          ),
+          Positioned(top: 90, child: _ColumnAvatar(Provider.of<ClientState>(context).client)),
           Positioned(top: 300, left: 20, child: _Title()),
           _Cameos(),
         ],
       ),
     );
-    // return Scaffold(
-    //   body: Column(
-    //     children: <Widget>[
-    //       Stack(
-    //         alignment: Alignment.topCenter,
-    //         children: [
-    //           _Background(),
-    //           Column(children: [SizedBox(height: 16), _Logo()]),
-    //           Row(
-    //             mainAxisAlignment: MainAxisAlignment.end,
-    //             children: [_Options()],
-    //           ),
-    //           Column(
-    //             children: [
-    //               SizedBox(height: 90),
-    //               FutureBuilder(
-    //                 future: clientRepository.getCurrentClient(prefs.accessToken),
-    //                 builder: (context, AsyncSnapshot<Client> snapshot) {
-    //                   if (snapshot.connectionState == ConnectionState.waiting) {
-    //                     return CircularProgressIndicator();
-    //                   } else {
-    //                     if (snapshot.hasData) {
-    //                       return _ColumnAvatar(client: snapshot.data);
-    //                     } else {
-    //                       return Text(
-    //                         'No se pudo obtener el usuario',
-    //                         style: TextStyle(color: Colors.white),
-    //                       );
-    //                     }
-    //                   }
-    //                 },
-    //               ),
-    //               SizedBox(height: 20),
-    //             ],
-    //           ),
-    //         ],
-    //       ),
-    //       _Title(),
-    //       Expanded(child: _Cameos()),
-    //     ],
-    //   ),
-    // );
   }
 }
 
@@ -159,7 +100,7 @@ class _Background extends StatelessWidget {
 class _ColumnAvatar extends StatelessWidget {
   final Client client;
 
-  const _ColumnAvatar({this.client});
+  const _ColumnAvatar(this.client);
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -397,6 +338,7 @@ class _Cameos extends StatelessWidget {
                 //   },
                 // );
                 return StaggeredGridView.countBuilder(
+                  physics: BouncingScrollPhysics(),
                   itemCount: snapshot.data.length,
                   crossAxisCount: crossAxisCount,
                   crossAxisSpacing: 2,

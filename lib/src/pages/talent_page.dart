@@ -32,7 +32,7 @@ class _BackgroundImage extends StatelessWidget {
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
     return Hero(
-      tag: Provider.of<TalentState>(context).name,
+      tag: Provider.of<TalentState>(context).userName,
       child: ClipRRect(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(50),
@@ -92,12 +92,12 @@ class _CardBody extends StatelessWidget {
 class _Title extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    String name = Provider.of<TalentState>(context).name;
+    String fullName = Provider.of<TalentState>(context).fullName;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Text(
-          name,
+          fullName,
           overflow: TextOverflow.ellipsis,
           style: Theme.of(context).textTheme.headline4,
         ),
@@ -185,7 +185,10 @@ class _RequestButton extends StatelessWidget {
         onPressed: () => Navigator.pushNamed(
           context,
           'request_present',
-          arguments: Provider.of<TalentState>(context, listen: false).name,
+          arguments: {
+            'userName': Provider.of<TalentState>(context, listen: false).userName,
+            'price': Provider.of<TalentState>(context, listen: false).price,
+          },
         ),
       ),
     );

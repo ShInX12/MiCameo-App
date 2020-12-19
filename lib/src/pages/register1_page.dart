@@ -63,32 +63,26 @@ class __RegisterFormState extends State<_RegisterForm> {
   final _emailValidator = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
   final clientRepository = new ClientRepository();
+  bool _loading = false;
 
   void _createUser() async {
     if (_formKey.currentState.validate()) {
+      setState(() => this._loading = true);
+
       final result = await clientRepository.registerClient(
         this.register1model.email,
         this.register1model.password,
       );
 
-      if (result['status'] == 201) {}
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CustomAlertDialog(
-            context: context,
-            title: result['status'] == 201
-                ? 'Usuario creado'
-                : 'Ha ocurrido un error (${result['status']})',
-            content: result['status'] == 201
-                ? 'Revisa el link enviado a tu correo para activar tu cuenta y poder iniciar sesión'
-                : result['body'],
-            onPressed: () => result['status'] == 201
-                // ? Navigator.popAndPushNamed(context, 'register2')
-                ? Navigator.pop(context)
-                : Navigator.pop(context),
-          );
-        },
+      FocusScope.of(context).unfocus();
+      setState(() => this._loading = false);
+
+      showCustomAlertDialog(
+        context,
+        result['status'] == 201 ? 'Usuario creado' : 'Ha ocurrido un error (${result['status']})',
+        result['status'] == 201
+            ? 'Revisa el link enviado a tu correo para activar tu cuenta y poder iniciar sesión'
+            : result['body'],
       );
     }
   }
@@ -130,15 +124,14 @@ class __RegisterFormState extends State<_RegisterForm> {
               _formKey.currentState.save();
               return null;
             },
-            onSaved: (String value) =>
-                this.register1model.password = value.trim(),
+            onSaved: (String value) => this.register1model.password = value.trim(),
           ),
           SizedBox(height: 60),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 70),
             child: ButtonType1(
-              text: 'Continuar',
-              onPressed: () => _createUser(),
+              text: _loading ? 'Enviando...' : 'Continuar',
+              onPressed: _loading ? () {} : _createUser,
             ),
           ),
           SizedBox(height: 10),

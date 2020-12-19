@@ -48,30 +48,23 @@ class __LoginFormState extends State<_LoginForm> {
   final _emailValidator = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
   final clientRepository = new ClientRepository();
+  bool _loading = false;
 
   void _login() async {
+    setState(() => this._loading = true);
     if (_formKey.currentState.validate()) {
-
       final loginResult = await clientRepository.loginWithEmail(
         this.loginModel.email,
         this.loginModel.password,
       );
 
       if (loginResult['status'] == 200) {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-            'navigation_bar', (Route<dynamic> route) => false);
+        await clientRepository.getCurrentClient(context);
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('navigation_bar', (Route<dynamic> route) => false);
       } else {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CustomAlertDialog(
-              context: context,
-              title: 'Oh no!',
-              content: loginResult['body'],
-              onPressed: () => Navigator.pop(context),
-            );
-          },
-        );
+        setState(() => this._loading = false);
+        showCustomAlertDialog(context, 'Oh no!', loginResult['body']);
       }
     }
   }
@@ -119,8 +112,8 @@ class __LoginFormState extends State<_LoginForm> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 70),
             child: ButtonType1(
-              text: 'Ingresar',
-              onPressed: () => _login(),
+              text: _loading ? 'Ingresando...' : 'Ingresar',
+              onPressed: _loading ? (){} : _login,
             ),
           ),
           SizedBox(height: 20),

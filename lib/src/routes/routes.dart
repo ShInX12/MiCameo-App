@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mi_cameo/src/pages/edit_profile_page.dart';
 import 'package:mi_cameo/src/pages/home_page.dart';
 import 'package:mi_cameo/src/pages/initial_page.dart';
+import 'package:mi_cameo/src/pages/loading_page.dart';
 import 'package:mi_cameo/src/pages/login_page.dart';
 import 'package:mi_cameo/src/pages/messages_page.dart';
 import 'package:mi_cameo/src/pages/navigation_bar_page.dart';
@@ -21,24 +22,25 @@ import 'package:mi_cameo/src/pages/video_player_page.dart';
 Map<String, WidgetBuilder> applicationRoutes(){
 
   return {
-    'initial': (BuildContext context) => InitialPage(),
-    'login': (BuildContext context) => LoginPage(),
-    'register1': (BuildContext context) => Register1Page(),
-    'register2': (BuildContext context) => Register2Page(),
-    'home': (BuildContext context) => HomePage(),
-    'messages': (BuildContext context) => MessagesPage(),
-    'navigation_bar': (BuildContext context) => NavigationBarPage(),
-    'notifications': (BuildContext context) => NotificationsPage(),
-    'options': (BuildContext context) => OptionsPage(),
-    'profile': (BuildContext context) => ProfilePage(),
-    'search': (BuildContext context) => SearchPage(),
-    'talent': (BuildContext context) => TalentPage(),
-    'request': (BuildContext context) => RequestCameo(),
-    'request_present': (BuildContext context) => RequestCameoAsPresent(),
-    'select_cameo': (BuildContext context) => SelectCameoPage(),
-    'subcategory_list': (BuildContext context) => SubcategoryList(),
-    'edit_profile': (BuildContext context) => EditProfilePage(),
-    'video_player': (BuildContext context) => VideoPlayerPage(),
+    'loading'         : (_) => LoadingPage(),
+    'initial'         : (_) => InitialPage(),
+    'login'           : (_) => LoginPage(),
+    'register1'       : (_) => Register1Page(),
+    'register2'       : (_) => Register2Page(),
+    'navigation_bar'  : (_) => NavigationBarPage(),
+    'home'            : (_) => HomePage(),
+    'messages'        : (_) => MessagesPage(),
+    'search'          : (_) => SearchPage(),
+    'notifications'   : (_) => NotificationsPage(),
+    'profile'         : (_) => ProfilePage(),
+    'options'         : (_) => OptionsPage(),
+    'talent'          : (_) => TalentPage(),
+    'request'         : (_) => RequestCameo(),
+    'request_present' : (_) => RequestCameoAsPresent(),
+    'select_cameo'    : (_) => SelectCameoPage(),
+    'subcategory_list': (_) => SubcategoryList(),
+    'edit_profile'    : (_) => EditProfilePage(),
+    'video_player'    : (_) => VideoPlayerPage(),
   };
 
 }

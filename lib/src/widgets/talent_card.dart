@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:mi_cameo/src/themes/theme.dart';
 
 class TalentCard extends StatelessWidget {
-  final String name;
+  final String userName;
+  final String title;
   final String ocupation;
   final String urlImage;
   final String price;
   final Function onTap;
 
   const TalentCard({
-    @required this.name,
+    @required this.userName,
+    @required this.title,
     @required this.ocupation,
     @required this.urlImage,
     @required this.price,
@@ -31,12 +33,12 @@ class TalentCard extends StatelessWidget {
             Stack(
               alignment: Alignment.bottomCenter,
               children: [
-                _TalentCardImage(urlImage: urlImage, name: name),
+                _TalentCardImage(urlImage: urlImage, userName: userName),
                 _Price(price: price),
               ],
             ),
             SizedBox(height: 5),
-            _TalentCardTitle(name: name),
+            _TalentCardTitle(title: title),
             _TalentCardSubtitle(ocupation: ocupation),
           ],
         ),
@@ -47,9 +49,9 @@ class TalentCard extends StatelessWidget {
 
 class _TalentCardImage extends StatelessWidget {
   final String urlImage;
-  final String name;
+  final String userName;
 
-  const _TalentCardImage({@required this.urlImage, this.name});
+  const _TalentCardImage({@required this.urlImage, this.userName});
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +60,7 @@ class _TalentCardImage extends StatelessWidget {
       height: 135,
       width: 135,
       child: Hero(
-        tag: name,
+        tag: userName,
         child: ClipRRect(
           borderRadius: BorderRadius.all(Radius.circular(100)),
           child: (urlImage == null || urlImage == '')
@@ -79,13 +81,13 @@ class _TalentCardImage extends StatelessWidget {
 }
 
 class _TalentCardTitle extends StatelessWidget {
-  final String name;
-  const _TalentCardTitle({@required this.name});
+  final String title;
+  const _TalentCardTitle({@required this.title});
 
   @override
   Widget build(BuildContext context) {
     return Text(
-      name == null ? '' : name,
+      title == null ? '' : title,
       overflow: TextOverflow.ellipsis,
       style: Theme.of(context).textTheme.subtitle1,
     );

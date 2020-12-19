@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mi_cameo/src/models/user_model.dart';
 import 'package:mi_cameo/src/repository/client_repository.dart';
+import 'package:mi_cameo/src/state/client_state.dart';
 import 'package:mi_cameo/src/widgets/widgets.dart';
+import 'package:provider/provider.dart';
 
 class EditProfilePage extends StatelessWidget {
   @override
@@ -19,23 +21,7 @@ class _Body extends StatelessWidget {
   const _Body();
   @override
   Widget build(BuildContext context) {
-    final clientRepository = ClientRepository();
-    return FutureBuilder(
-      future: clientRepository.getCurrentClient(),
-      builder: (context, AsyncSnapshot<Client> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else {
-          if (snapshot.hasData) {
-            return _ProfileForm(snapshot.data);
-          } else if (snapshot.hasError) {
-            return Center(child: Text(snapshot.error));
-          } else {
-            return Center(child: Text('No se pudo obtener el usuario'));
-          }
-        }
-      },
-    );
+    return _ProfileForm(Provider.of<ClientState>(context, listen: false).client);
   }
 }
 
@@ -52,39 +38,23 @@ class __ProfileFormState extends State<_ProfileForm> {
   final _formKey = GlobalKey<FormState>();
   final clientRepository = ClientRepository();
   final _dateValidation = RegExp(r'^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$');
+  bool _loading = false;
 
   void _save() async {
     if (_formKey.currentState.validate()) {
+      setState(() => this._loading = true);
+
       if (widget.client.birthday == '') widget.client.birthday = null;
       User userResponse = await clientRepository.updateUser(widget.client.user);
       Client clientResponse = await clientRepository.updateClient(widget.client);
 
+      FocusScope.of(context).unfocus();
+      setState(() => this._loading = false);
+
       if (clientResponse != null && userResponse != null) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return CustomAlertDialog(
-              context: context,
-              title: 'Perfil actualizado',
-              content: 'El perfil ha sido actualizado correctamente',
-              buttonText: 'Continuar',
-              onPressed: () => Navigator.pop(context),
-            );
-          },
-        );
+        showCustomAlertDialog(context, 'Perfil actualizado', 'Perfil actualizado correctamente');
       } else {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return CustomAlertDialog(
-              context: context,
-              title: 'Oh no!',
-              content: 'Ha ocurrido un error al actualizar el perfil',
-              buttonText: 'Continuar',
-              onPressed: () => Navigator.pop(context),
-            );
-          },
-        );
+        showCustomAlertDialog(context, 'Oh no!', 'Ha ocurrido un error al actualizar el perfil');
       }
     }
   }
@@ -154,9 +124,9 @@ class __ProfileFormState extends State<_ProfileForm> {
           ),
           SizedBox(height: 60),
           ButtonType1(
-            text: 'Guardar',
+            text: _loading ? 'Guardando...' : 'Guardar',
             colorPurple: true,
-            onPressed: _save,
+            onPressed: _loading ? () {} : _save,
           ),
           SizedBox(height: 20),
         ],
