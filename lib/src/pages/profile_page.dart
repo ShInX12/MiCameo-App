@@ -1,17 +1,17 @@
 import 'dart:io';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:mi_cameo/src/models/cameo_model.dart';
-import 'package:mi_cameo/src/repository/cameo_repository.dart';
-import 'package:mi_cameo/src/state/client_state.dart';
-import 'package:mi_cameo/src/widgets/video_preview.dart';
-import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:uuid/uuid.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mi_cameo/src/models/cameo_model.dart';
 import 'package:mi_cameo/src/models/user_model.dart';
+import 'package:mi_cameo/src/repository/cameo_repository.dart';
 import 'package:mi_cameo/src/repository/client_repository.dart';
+import 'package:mi_cameo/src/state/client_state.dart';
+import 'package:mi_cameo/src/widgets/video_preview.dart';
 import 'package:mi_cameo/src/themes/theme.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -194,9 +194,7 @@ class __AvatarImageState extends State<_AvatarImage> {
   }
 
   Future<void> _uploadFile(File file) async {
-    setState(() {
-      loading = true;
-    });
+    setState(() => loading = true);
     final lastImage = widget.client.profileImage;
     final String uuid = Uuid().v1();
     final StorageReference ref = storage.ref().child('uploads').child('img$uuid.jpg');
@@ -207,9 +205,7 @@ class __AvatarImageState extends State<_AvatarImage> {
     await uploadTask.onComplete;
     widget.client.profileImage = await ref.getDownloadURL();
     final clientUpdated = await clientRepository.updateClient(widget.client);
-    setState(() {
-      loading = false;
-    });
+    setState(() => loading = false);
 
     if (clientUpdated != null) {
       Scaffold.of(context).showSnackBar(SnackBar(

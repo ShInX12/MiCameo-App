@@ -51,8 +51,8 @@ class __LoginFormState extends State<_LoginForm> {
   bool _loading = false;
 
   void _login() async {
-    setState(() => this._loading = true);
     if (_formKey.currentState.validate()) {
+      setState(() => this._loading = true);
       final loginResult = await clientRepository.loginWithEmail(
         this.loginModel.email,
         this.loginModel.password,
@@ -113,7 +113,7 @@ class __LoginFormState extends State<_LoginForm> {
             padding: EdgeInsets.symmetric(horizontal: 70),
             child: ButtonType1(
               text: _loading ? 'Ingresando...' : 'Ingresar',
-              onPressed: _loading ? (){} : _login,
+              onPressed: _loading ? () {} : _login,
             ),
           ),
           SizedBox(height: 20),

@@ -6,6 +6,7 @@ class VideoPlayerPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final String url = ModalRoute.of(context).settings.arguments;
     return Scaffold(
+      backgroundColor: Colors.black,
       body: _Body(url),
     );
   }
@@ -76,39 +77,43 @@ class __PlayerState extends State<_Player> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          AspectRatio(
-            aspectRatio: widget.controller.value.aspectRatio,
-            child: VideoPlayer(widget.controller),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IconButton(
-                icon: AnimatedIcon(
-                  icon: AnimatedIcons.play_pause,
-                  progress: _animationController,
+    return Container(
+      alignment: Alignment.center,
+      height: MediaQuery.of(context).size.height,
+      child: SingleChildScrollView(
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            AspectRatio(
+              aspectRatio: widget.controller.value.aspectRatio,
+              child: VideoPlayer(widget.controller),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                IconButton(
+                  icon: AnimatedIcon(
+                    icon: AnimatedIcons.play_pause,
+                    progress: _animationController,
+                  ),
+                  iconSize: 50,
+                  color: Colors.white,
+                  onPressed: () {
+                    setState(() {
+                      if (widget.controller.value.isPlaying) {
+                        _animationController.reverse();
+                        widget.controller.pause();
+                      } else {
+                        _animationController.forward();
+                        widget.controller.play();
+                      }
+                    });
+                  },
                 ),
-                iconSize: 50,
-                color: Colors.white,
-                onPressed: () {
-                  setState(() {
-                    if (widget.controller.value.isPlaying) {
-                      _animationController.reverse();
-                      widget.controller.pause();
-                    } else {
-                      _animationController.forward();
-                      widget.controller.play();
-                    }
-                  });
-                },
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

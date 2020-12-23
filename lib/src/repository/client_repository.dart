@@ -1,14 +1,14 @@
-import 'dart:convert';
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:mi_cameo/src/helpers/api_base_helper.dart';
 import 'package:mi_cameo/src/helpers/helpers.dart';
 import 'package:mi_cameo/src/models/user_model.dart';
 import 'package:mi_cameo/src/preferences/user_preferences.dart';
 import 'package:mi_cameo/src/state/client_state.dart';
-import 'package:provider/provider.dart';
 
 class ClientRepository {
   final prefs = UserPreferences();
